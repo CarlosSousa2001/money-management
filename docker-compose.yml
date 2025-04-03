@@ -1,0 +1,25 @@
+name: frontend-mvp
+services:
+  frontend:
+    container_name: frontend-mvp-container     
+    build:
+      context: .                       
+      dockerfile: Dockerfile                
+    ports:
+      - "3000:3000"                       
+    volumes:
+      - .:/frontend
+    env_file:
+      - .env.production                 
+    environment:
+      - NODE_ENV=production                   
+    command: npm run start                    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"] 
+      interval: 30s                         
+      timeout: 10s                          
+      retries: 3                            
+    restart: always                          
+
+volumes:
+  frontend_data:                               
