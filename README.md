@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Money Management
 
-## Getting Started
+**Money Management** é uma aplicação de controle financeiro baseada na entrada e saída de valores. O sistema permite um gerenciamento eficiente das finanças pessoais, oferecendo funcionalidades como cadastro de transações, controle de cartões de crédito, dashboards financeiros e emissão de relatórios.
 
-First, run the development server:
+![image](https://github.com/user-attachments/assets/782798ac-e7df-4818-9b48-ba522fb5d723)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📌 Funcionalidades
+
+- 🔍 **Filtros de Busca**: Pesquise transações com base em diferentes critérios.
+- 💳 **Gerenciamento de Cartões de Crédito**: Adicione e acompanhe seus cartões para melhor controle financeiro.
+- 📋 **CRUD de Transações**: Registre pagamentos e divida valores entre diferentes formas de pagamento (ex: metade no cartão de crédito, metade no Pix).
+- 📊 **Dashboard Financeiro**: Acompanhe a saúde da sua carteira em tempo real.
+- 📑 **Geração de Relatórios**: Exporte e visualize suas finanças de forma detalhada.
+
+## 🚀 Tecnologias Utilizadas
+
+- **Next.js** ⚛️
+- **TypeScript** 🟦
+- **React Hook Form** 📜
+- **Zod** ⚖️
+- **tailwindcss** 🎨
+- **Shadcn-ui** 📊
+
+![mobile-img-money](https://github.com/user-attachments/assets/bc6a6563-6f38-4a0d-a4ce-c63b0fd5f54f)
+
+## 🐳 Containerização com Docker
+
+Este projeto utiliza **Docker** e **Docker Compose** para facilitar a configuração do ambiente de desenvolvimento e produção. Com isso, todas as dependências e configurações são gerenciadas dentro de containers, garantindo uma execução consistente.
+
+### 🔹 Como rodar o projeto com Docker
+
+Para iniciar a aplicação usando Docker, execute o seguinte comando:
+
+```sh
+docker-compose up --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🌐 Integração com API em C#
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+O **Money Management** consome dados de uma **API desenvolvida em C# com .NET**, responsável por gerenciar as transações financeiras e fornecer as informações necessárias para a interface do usuário.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🔹 A API é utilizada para:
 
-## Learn More
+- 📡 **Buscar e registrar transações**
+- 💳 **Gerenciar cartões de crédito**
+- 📊 **Fornecer dados para os dashboards**
+- 📑 **Gerar relatórios financeiros**
 
-To learn more about Next.js, take a look at the following resources:
+Essa arquitetura separada permite **escalabilidade** e **manutenção eficiente** entre o frontend e o backend.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
