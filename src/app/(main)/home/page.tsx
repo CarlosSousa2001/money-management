@@ -76,7 +76,7 @@ export default function HomePage() {
                             </div>
                         </CardProgressItem>
 
-                        <CardProgressItem title={"Dispersas"} icon={<Box className="text-red-600" />} color={"bg-red-200"}>
+                        <CardProgressItem title={"Gastos"} icon={<Box className="text-red-600" />} color={"bg-red-200"}>
                             <div className="flex items-center justify-between mb-3">
                                 <span>Meta</span>
                                 <span>45%</span>

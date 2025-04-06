@@ -1,4 +1,4 @@
-import { Home, CreditCard, Clipboard, DollarSign, Settings, HelpCircle } from "lucide-react";
+import { Home, CreditCard, Clipboard, DollarSign, Settings, HelpCircle, WalletCards } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { JSX, useState } from "react";
@@ -20,6 +20,7 @@ export function SideBar() {
         { path: "/home", name: "Dashboard", icon: <Home size={20} />, module: "Home" },
         { path: "/transactions/new", name: "Transactions", icon: <CreditCard size={20} />, module: "Utilities" },
         { path: "/plan", name: "Plan", icon: <Clipboard size={20} />, module: "Utilities" },
+        { path: "/credit-card/new", name: "Credit card", icon: <WalletCards size={20} />, module: "Utilities" },
         { path: "/budget", name: "Budget", icon: <DollarSign size={20} />, module: "Utilities" },
         { path: "/settings", name: "Settings", icon: <Settings size={20} />, module: "Utilities" },
         { path: "/help", name: "Help", icon: <HelpCircle size={20} />, module: "Extra" },

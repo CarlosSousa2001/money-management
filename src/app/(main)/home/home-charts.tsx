@@ -48,7 +48,7 @@ export function HomeCharts() {
         <Card>
             <CardHeader>
                 <div className="w-full flex items-center justify-between">
-                    <CardTitle>Revenue Forecast</CardTitle>
+                    <CardTitle>Controle</CardTitle>
                     <Select>
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Options" />
