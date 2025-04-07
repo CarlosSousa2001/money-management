@@ -1,4 +1,6 @@
-export function formatCreditCardSecure(raw: string): string {
+export function formatCreditCardSecure(raw?: string): string {
+    if (!raw) return '';
+
     // Remove tudo que não for número
     const digits = raw.replace(/\D/g, '');
 

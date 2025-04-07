@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input"
 import { cardTypeEnumBase } from "./types/credit-card-types-schema"
 import { CreditCardItem } from "@/components/credit-card"
 import { formatCreditCardSecure } from "@/utils/format-credit-card-secure"
-import { format } from "date-fns"
+import { format, isValid, parseISO } from "date-fns"
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 // Import Swiper styles
@@ -33,8 +33,15 @@ import 'swiper/css/effect-cards';
 
 // import required modules
 import { EffectCards } from 'swiper/modules';
+import { formatMonthYearInput } from "@/utils/format-date-moth-year"
+import { translateCardType } from "@/utils/translatcard-type"
+import { useState, useTransition } from "react"
+import { createCardCreditDebit } from "./_api/create-card-credit-debit"
+import { toast } from "sonner"
+import { Loader2Icon } from "lucide-react"
 
 export function CreditCardForms() {
+    const [isPending, startTransition] = useState(false)
 
     const form = useForm<CreditCardFormData>({
         mode: "onChange",
@@ -42,19 +49,29 @@ export function CreditCardForms() {
         defaultValues: defaultValuesCreditCardData,
     })
 
-    const watchedValues = form.watch();
+    const { handleSubmit, setValue, getValues, trigger, watch } = form;
 
-    function onSubmit(data: CreditCardFormData) {
+    async function onSubmit(data: CreditCardFormData) {
         console.log(data)
-        console.log("--------------------")
-        console.table(data)
+
+        startTransition(true)
+        const response = await createCardCreditDebit(data);
+        
+        if (response.status !== 201) {
+            console.error("Error updating name:");
+            toast.error("Erro ao criar cartão")
+            return;
+        }
+        startTransition(false)
+        toast.success("Cartão criado com sucesso")
+
     }
+
 
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 grid grid-cols-5 gap-8">
-                <div className="col-span-2">
-
+                <div className="col-span-2 mr-4">
                     <>
                         <Swiper
                             effect={'cards'}
@@ -64,80 +81,83 @@ export function CreditCardForms() {
                         >
                             <SwiperSlide>
                                 <CreditCardItem
-                                    cardHolder={watchedValues.name}
-                                    cardNumber={formatCreditCardSecure(watchedValues.number)}
-                                    cardIssuer={watchedValues.company}
-                                    cardType={watchedValues.cardType}
-                                    cardValidity={format(watchedValues.expiredDate, "dd/MM")}
-                                    cardFlag={watchedValues.flag}
-                                    minHeight="h-58"
-                                />
-                            </SwiperSlide>
-                            <SwiperSlide>
-                                <CreditCardItem
-                                    cardHolder={watchedValues.name}
-                                    cardNumber={formatCreditCardSecure(watchedValues.number)}
-                                    cardIssuer={watchedValues.company}
-                                    cardType={watchedValues.cardType}
-                                    cardValidity={format(watchedValues.expiredDate, "dd/MM")}
-                                    cardFlag={watchedValues.flag}
-                                    minHeight="h-58"
-                                    cardColors={["#4a00e0", "#8e2de2", "#4a00e0"]} // roxo escuro + claro
+                                    cardHolder={watch("name")}
+                                    cardNumber={formatCreditCardSecure(watch("number"))}
+                                    cardIssuer={watch("company")}
+                                    cardType={watch("cardType") || ""}
+                                    cardValidity={watch("expiredDate")}
 
+                                    cardFlag={watch("flag") || ""}
+                                    minHeight="h-58"
+                                />
+                            </SwiperSlide>
+
+                            <SwiperSlide>
+                                <CreditCardItem
+                                    cardHolder={watch("name")}
+                                    cardNumber={formatCreditCardSecure(watch("number"))}
+                                    cardIssuer={watch("company")}
+                                    cardType={watch("cardType") || ""}
+                                    cardValidity={watch("expiredDate")}
+
+                                    cardFlag={watch("flag") || ""}
+                                    minHeight="h-58"
+                                    cardColors={["#4a00e0", "#8e2de2", "#4a00e0"]}
                                 />
                             </SwiperSlide>
                             <SwiperSlide>
                                 <CreditCardItem
-                                    cardHolder={watchedValues.name}
-                                    cardNumber={formatCreditCardSecure(watchedValues.number)}
-                                    cardIssuer={watchedValues.company}
-                                    cardType={watchedValues.cardType}
-                                    cardValidity={format(watchedValues.expiredDate, "dd/MM")}
-                                    cardFlag={watchedValues.flag}
+                                    cardHolder={watch("name")}
+                                    cardNumber={formatCreditCardSecure(watch("number"))}
+                                    cardIssuer={watch("company")}
+                                    cardType={watch("cardType") || ""}
+                                    cardValidity={watch("expiredDate")}
+
+                                    cardFlag={watch("flag") || ""}
                                     minHeight="h-58"
+
                                     cardColors={["#ff8000", "#ffaa00", "#ff8000"]}
                                 />
                             </SwiperSlide>
-
                             <SwiperSlide>
                                 <CreditCardItem
-                                    cardHolder={watchedValues.name}
-                                    cardNumber={formatCreditCardSecure(watchedValues.number)}
-                                    cardIssuer={watchedValues.company}
-                                    cardType={watchedValues.cardType}
-                                    cardValidity={format(watchedValues.expiredDate, "dd/MM")}
-                                    cardFlag={watchedValues.flag}
+                                    cardHolder={watch("name")}
+                                    cardNumber={formatCreditCardSecure(watch("number"))}
+                                    cardIssuer={watch("company")}
+                                    cardType={watch("cardType") || ""}
+                                    cardValidity={watch("expiredDate")}
+
+                                    cardFlag={watch("flag") || ""}
                                     minHeight="h-58"
                                     cardColors={["#b8860b", "#ffd700", "#b8860b"]}
                                 />
                             </SwiperSlide>
-
                             <SwiperSlide>
                                 <CreditCardItem
-                                    cardHolder={watchedValues.name}
-                                    cardNumber={formatCreditCardSecure(watchedValues.number)}
-                                    cardIssuer={watchedValues.company}
-                                    cardType={watchedValues.cardType}
-                                    cardValidity={format(watchedValues.expiredDate, "dd/MM")}
-                                    cardFlag={watchedValues.flag}
+                                    cardHolder={watch("name")}
+                                    cardNumber={formatCreditCardSecure(watch("number"))}
+                                    cardIssuer={watch("company")}
+                                    cardType={watch("cardType") || ""}
+                                    cardValidity={watch("expiredDate")}
+
+                                    cardFlag={watch("flag") || ""}
                                     minHeight="h-58"
                                     cardColors={["#0033cc", "#00ccff", "#0033cc"]}
                                 />
                             </SwiperSlide>
-
                             <SwiperSlide>
                                 <CreditCardItem
-                                    cardHolder={watchedValues.name}
-                                    cardNumber={formatCreditCardSecure(watchedValues.number)}
-                                    cardIssuer={watchedValues.company}
-                                    cardType={watchedValues.cardType}
-                                    cardValidity={format(watchedValues.expiredDate, "dd/MM")}
-                                    cardFlag={watchedValues.flag}
+                                    cardHolder={watch("name")}
+                                    cardNumber={formatCreditCardSecure(watch("number"))}
+                                    cardIssuer={watch("company")}
+                                    cardType={watch("cardType") || ""}
+                                    cardValidity={watch("expiredDate")}
+
+                                    cardFlag={watch("flag") || ""}
                                     minHeight="h-58"
                                     cardColors={["#005c4b", "#00c98d", "#005c4b"]}
                                 />
                             </SwiperSlide>
-
                         </Swiper>
                     </>
 
@@ -167,7 +187,7 @@ export function CreditCardForms() {
                             <FormItem className="col-span-6 lg:col-span-2">
                                 <FormLabel>Número do cartão</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="62******9988" {...field} />
+                                    <Input placeholder="62******9988" maxLength={19} {...field} />
                                 </FormControl>
                                 <FormDescription className="text-red-500 font-bold">
                                     Seu cartão nunca será salvo com todos os digitos
@@ -218,15 +238,18 @@ export function CreditCardForms() {
                             <FormItem className="col-span-6 lg:col-span-2">
                                 <FormLabel>Data de vencimento</FormLabel>
                                 <FormControl>
-                                    <Input type="date" {...field} />
+                                    <Input
+                                        placeholder="MM/YYYY"
+                                        {...field}
+                                        maxLength={7}
+                                    />
                                 </FormControl>
-                                <FormDescription>
-                                    This is value of the transaction.
-                                </FormDescription>
+                                <FormDescription>Este é o vencimento do cartão.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
+
 
                     <FormField
                         control={form.control}
@@ -243,7 +266,7 @@ export function CreditCardForms() {
                                     <SelectContent>
                                         {Object.entries(cardTypeEnumBase).map(([key, value]) => (
                                             <SelectItem key={value} value={key}>
-                                                {value}
+                                                {translateCardType(value as cardTypeEnumBase)}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -253,7 +276,18 @@ export function CreditCardForms() {
                             </FormItem>
                         )}
                     />
-                    <Button className="w-36" type="submit">Salvar</Button>
+                    {isPending ? (
+                        <Button className="w-36" disabled={isPending}>
+                            <Loader2Icon className="animate-spin" />
+                        </Button>
+                    ) : (
+                        <Button className="w-36" disabled={isPending}>
+                            Salvar
+                        </Button>
+                    )}
+
+
+
                 </div>
 
 
