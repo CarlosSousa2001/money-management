@@ -311,15 +311,15 @@ export function TransactionsForm() {
 
           <FormField
             control={form.control}
-            name="transactionDate"
+            name="TransactionScheduledDate"
             render={({ field }) => (
               <FormItem className="col-span-6 lg:col-span-2">
-                <FormLabel>Link</FormLabel>
+                <FormLabel>Data do pagamento</FormLabel>
                 <FormControl>
                   <Input type="date" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Select a date for the transaction.
+                  A confirmação da sera realizada na data selecionada.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -439,7 +439,6 @@ export function TransactionsForm() {
                                     cardIssuer={card.cardIssuer}
                                     cardType={card.cardType}
                                     cardValidity={card.cardValidity}
-                                    cardExpire={card.cardExpire}
                                     cardFlag={card.cardFlag}
                                   />
                                 </div>

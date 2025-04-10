@@ -21,3 +21,15 @@ export const DATA_CONST_PAGINATED = {
         prevPage: null,
     }
 }
+
+export interface ResponseDataBase<T> {
+    data: T[];
+    message: string;
+    success: boolean;
+}
+
+export interface ResponseDataBaseSimple<T> {
+    data: T;
+    message: string;
+    success: boolean;
+}

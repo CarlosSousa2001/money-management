@@ -43,7 +43,7 @@ export const transactionsFormSchema = z.object({
     currency: z.nativeEnum(CurrencyType, {
         required_error: "Please select a currency."
     }),
-    transactionDate: z.coerce.date({
+    TransactionScheduledDate: z.coerce.date({
         required_error: "Please select a transaction date.",
         invalid_type_error: "Please select a valid transaction date.",
     }).transform((date) => {
@@ -67,7 +67,7 @@ export const defaultValuesTransactionsData: Partial<transactionsFormData> = {
     payerOurReceiver: "",
     amount: 0,
     currency: CurrencyType.BRL,
-    transactionDate: "",
+    TransactionScheduledDate: "",
     email: "",
     description: "",
     paymentTypes: [
