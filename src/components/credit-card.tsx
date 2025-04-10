@@ -10,6 +10,7 @@ interface CreditCardItemProps {
   cardActive?: boolean;
   minHeight?: string;
   cardColors?: [string, string, string]; // <-- NOVO: gradiente em 3 cores
+  disableAnimation?: boolean; // <-- nova prop
 }
 
 export function CreditCardItem({
@@ -21,12 +22,13 @@ export function CreditCardItem({
   cardFlag,
   minHeight = "h-36",
   cardColors = ["#000000", "#303030", "#000000"], // padrão igual ao original
+  disableAnimation = false,
 }: CreditCardItemProps) {
   const gradient = `linear-gradient(110deg, ${cardColors[0]} 45%, ${cardColors[1]} 55%, ${cardColors[2]})`;
 
   return (
     <div
-      className={`min-w-[300px] ${minHeight} m-auto rounded-xl relative text-white shadow-2xl transition-transform transform overflow-hidden`}
+      className={`w-full ${minHeight} m-auto rounded-xl relative text-white shadow-2xl transition-transform transform overflow-hidden`}
     >
       {/* Fundo animado com cores customizáveis */}
       <div
@@ -34,7 +36,7 @@ export function CreditCardItem({
         style={{
           background: gradient,
           backgroundSize: "400% 100%",
-          animation: "shine 6s linear infinite",
+          animation: disableAnimation ? undefined : "shine 6s linear infinite",
         }}
       />
 

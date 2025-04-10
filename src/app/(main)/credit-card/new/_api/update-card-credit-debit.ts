@@ -1,7 +1,8 @@
 import { http } from "@/lib/http";
-import { CreateCreditDebitCard, CreditDebitCardResponse } from "../types/credit-card-types-schema";
+import { CreditDebitCardResponse, UpdateCreditDebitCard } from "../types/credit-card-types-schema";
 
-export async function createCardCreditDebit({
+export async function updateCardCreditDebit({
+    id,
     name,
     number,
     company,
@@ -9,10 +10,10 @@ export async function createCardCreditDebit({
     expiredDate,
     cardType,
     colors
-}: CreateCreditDebitCard) {
+}: UpdateCreditDebitCard) {
 
     const response = await http
-        .post("cards", {
+        .put(`cards/${id}`, {
             json: {
                 name,
                 number,
