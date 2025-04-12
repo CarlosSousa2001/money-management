@@ -54,7 +54,6 @@ export function CreditCardForms() {
     const [invalidateQuery, setInvalidateQuery] = useState(false)
     const [color, setColor] = useState<Color>("slate");
     const [cardId, setCardId] = useState<string>("")
-    const [newCard, setNewCard] = useState<boolean>(false);
 
     const [isPending, startTransition] = useState(false)
 
@@ -66,20 +65,7 @@ export function CreditCardForms() {
 
     const { handleSubmit, setValue, getValues, trigger, watch, formState: { errors }, reset } = form;
 
-    const previewCard = {
-        cardHolder: watch("name"),
-        cardNumber: formatCreditCardSecure(watch("number")),
-        cardIssuer: watch("company"),
-        cardType: watch("cardType") || "",
-        cardValidity: watch("expiredDate"),
-        cardFlag: watch("flag") || "",
-        cardColors: getColorsCard(color),
-    };
-
-    console.log(errors)
-
     async function onSubmit(data: CreditCardFormData) {
-        console.log(data)
         // startTransition(true)
 
         if (cardId) {
@@ -91,7 +77,6 @@ export function CreditCardForms() {
             }
 
             toast.success("Cartão atualizado com sucesso")
-            setNewCard(false)
             setInvalidateQuery(prev => !prev)
             reset(defaultValuesCreditCardData)
             return;
@@ -105,14 +90,8 @@ export function CreditCardForms() {
             return;
         }
         // startTransition(false)
-        toast.success("Cartão criado com sucesso")
-        setNewCard(false)
+        toast.success("Cartão criado com sucesso", { id: "toast-success" })
         setInvalidateQuery(prev => !prev)
-        reset(defaultValuesCreditCardData)
-    }
-
-    function handleAddPreviewCard() {
-        setNewCard(true)
         reset(defaultValuesCreditCardData)
     }
 
@@ -125,7 +104,6 @@ export function CreditCardForms() {
         const currentIndex = swiper.realIndex; // índice do slide visível
         const currentCard = data?.data?.[currentIndex];
         if (currentCard) {
-            console.log(currentCard.id)
             const response = await getCardById(currentCard.id);
 
             const colorName = getColorNameFromArray(response.data.colors as [string, string, string]);
@@ -149,7 +127,11 @@ export function CreditCardForms() {
         }
     }
 
-
+    function handleNewCard() {
+        setCardId("");
+        reset(defaultValuesCreditCardData);
+        setColor("slate")
+    }
 
     return (
         <Form {...form}>
@@ -179,25 +161,6 @@ export function CreditCardForms() {
                                 </SwiperSlide>
                             ))}
 
-                            {newCard && (
-                                <div className="mt-6">
-                                    <div className="mb-4">
-                                        <p className="font-light">Novo cartão</p>
-                                    </div>
-                                    <CreditCardItem
-                                        disableAnimation={true}
-                                        cardHolder={previewCard.cardHolder}
-                                        cardNumber={previewCard.cardNumber}
-                                        cardIssuer={previewCard.cardIssuer}
-                                        cardType={previewCard.cardType}
-                                        cardValidity={previewCard.cardValidity}
-                                        cardFlag={previewCard.cardFlag}
-                                        cardColors={previewCard.cardColors}
-                                        minHeight="h-58"
-                                    />
-                                </div>
-                            )}
-
                         </Swiper>
                     </>
 
@@ -208,7 +171,7 @@ export function CreditCardForms() {
                         name="name"
                         render={({ field }) => (
                             <FormItem className="col-span-6 lg:col-span-2">
-                                <FormLabel>Nome</FormLabel>
+                                <FormLabel>Nome do titular</FormLabel>
                                 <FormControl>
                                     <Input  {...field} />
                                 </FormControl>
@@ -245,7 +208,7 @@ export function CreditCardForms() {
                             setValue("colors", colorArray);
                             trigger("colors");
                         }}>
-                            <SelectTrigger className="2md:mt-[22px] max-2md:w-full">
+                            <SelectTrigger data-testid="select-cores" className="2md:mt-[22px] max-2md:w-full">
                                 <SelectValue defaultValue={"green"} placeholder="Cores" />
                             </SelectTrigger>
                             <SelectContent>
@@ -370,15 +333,15 @@ export function CreditCardForms() {
                             <Loader2Icon className="animate-spin" />
                         </Button>
                     ) : (
-                        <>
-                            <Button className="w-36" disabled={isPending || isLoading}>
+                        <div className="flex items-center gap-4">
+                            <Button type="submit" className="w-36" disabled={isPending || isLoading}>
                                 Salvar
                             </Button>
 
-                            <Button type="button" onClick={handleAddPreviewCard} disabled={isLoading}>
-                                Adicionar novo cartão
+                            <Button variant="new" type="button" className="w-36" disabled={isPending || isLoading} onClick={() => handleNewCard()}>
+                                Novo cartão
                             </Button>
-                        </>
+                        </div>
                     )}
 
 

@@ -8,8 +8,8 @@ interface SubHeaderProps {
 export function HeaderPageUi({ title, description }: SubHeaderProps) {
     return (
         <div className="flex flex-col space-y-1.5">
-            <h2 className="text-2xl font-semibold leading-none tracking-tight">{title}</h2>
-            <p className="text-sm text-muted-foreground">{description}</p>
+            <h2 data-testid="header-page-title" className="text-2xl font-semibold leading-none tracking-tight">{title}</h2>
+            <p data-testid="header-page-description" className="text-sm text-muted-foreground">{description}</p>
         </div>
     );
 };
