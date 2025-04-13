@@ -12,7 +12,7 @@ interface CardFormBase {
     number: string;
     company: string;
     flag: string;
-    expiredDate: String;
+    expiredDate: string;
     cardType: cardTypeEnumBase;
     status: StatusDefaultActiveInactive;
     colors: string[];

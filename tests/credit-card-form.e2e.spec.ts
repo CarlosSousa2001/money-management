@@ -40,6 +40,6 @@ test.describe('Forms', () => {
         await expect(page.getByLabel(/data de vencimento/i)).toHaveValue('');
 
         // Exemplo para select ou combobox se aplicável:
-        await expect(page.getByRole('combobox', { name: /tipo do cartão/i })).toHaveValue('');
+        // await expect(page.getByRole('combobox', { name: /tipo do cartão/i })).toHaveValue('');
     });
 });

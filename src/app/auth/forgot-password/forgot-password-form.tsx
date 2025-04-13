@@ -37,6 +37,7 @@ export function ForgotPasswordForm() {
 
       setSuccessMessage('Link de recuperação enviado com sucesso!')
       // setTimeout(() => router.push('/auth/sign-in'), 2000)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err?.message || 'Erro ao enviar link de recuperação')
     } finally {

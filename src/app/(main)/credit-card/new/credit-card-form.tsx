@@ -99,7 +99,7 @@ export function CreditCardForms() {
         console.log("Re-fetching cards:", invalidateQuery);
         fetchData(getAllCardCreditDebit);
     }, [fetchData, invalidateQuery]);
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async function handleSlideChange(swiper: any) {
         const currentIndex = swiper.realIndex; // índice do slide visível
         const currentCard = data?.data?.[currentIndex];

@@ -68,6 +68,7 @@ export function ResetPasswordForm() {
       }
       setSuccess(true)
       setTimeout(() => router.push('/auth/sign-in'), 2000)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || 'Erro ao redefinir a senha')
     }

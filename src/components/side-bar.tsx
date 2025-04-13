@@ -30,8 +30,8 @@ export function SideBar() {
 
     return (
         <aside className="w-64 h-screen p-4">
-            <h2 className="text-2xl font-extrabold mb-6 b bg-green-400 text-white p-3 rounded-lg">
-                💰 MoneyFlow
+            <h2 className="text-xl font-extrabold mb-6 b bg-green-400 text-white p-3 rounded-lg">
+                💰 FinancialsNice
             </h2>
 
             <nav>
