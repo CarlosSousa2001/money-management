@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         '/auth/sign-in',
         '/auth/sign-up',
         '/auth/forgot-password',
-        '/auth/reset-password',
+        '/auth/reset-password/[token]',
     ];
 
     useEffect(() => {

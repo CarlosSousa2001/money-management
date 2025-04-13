@@ -18,7 +18,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
-import { resetPassword } from '../_api/reset-password'
+import { resetPassword } from '../../_api/reset-password'
 
 
 const schema = z
@@ -33,7 +33,11 @@ const schema = z
 
 type FormValues = z.infer<typeof schema>
 
-export function ResetPasswordForm() {
+interface ResetPasswordFormProps {
+  token: { token: string };
+}
+
+export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const {
     register,
     handleSubmit,
@@ -41,10 +45,7 @@ export function ResetPasswordForm() {
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
   })
-
-  const searchParams = useSearchParams()
   const router = useRouter()
-  const token = searchParams.get('token')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
 
@@ -62,7 +63,7 @@ export function ResetPasswordForm() {
 
     try {
       if (token) {
-        await resetPassword(data.password, token)
+        await resetPassword(data.password, token.token)
       } else {
         throw new Error('Token is missing or invalid')
       }
