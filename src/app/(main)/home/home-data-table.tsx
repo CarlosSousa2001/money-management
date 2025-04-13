@@ -45,12 +45,12 @@ export function HomeDataTable() {
 
     return (
         <div className="grid grid-cols-1 gap-4">
-            <div className="w-full bg-white rounded-lg shadow-md flex-1 ">
+            <div className="w-full dark:bg-neutral-900 rounded-lg shadow-md flex-1 ">
                 <div className="p-6 flex max-md:flex-col items-center justify-between">
                     <span className="leading-none font-semibold text-xl flex-2">Transactions</span>
                     <div className="flex items-center justify-end flex-1 gap-1 max-md:mt-4">
                         <Input className="w-full" placeholder="Pesquisar..." />
-                        <div className="rounded-md border bg-transparent  h-9 px-3 py-1 flex items-center justify-between border-green-300 text-green-600 cursor-pointer hover:bg-green-100 transition-all duration-200 ease-in-out">
+                        <div className="rounded-md border bg-transparent  h-9 px-3 py-1 flex items-center justify-between border-green-300 text-green-600 cursor-pointer hover:bg-green-100 dark:hover:bg-card transition-all duration-200 ease-in-out">
                             <Search className="size-5" />
                         </div>
                     </div>

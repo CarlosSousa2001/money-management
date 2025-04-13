@@ -11,7 +11,7 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
             {/* Sidebar Mobile com Sheet */}
             {/* Sidebar Desktop */}
             {isDesktop && (
-                <aside className="w-64 bg-white  text-zinc-900">
+                <aside className="w-64  text-zinc-900 dark:text-white">
                     <SideBar />
                 </aside>
             )}
@@ -19,7 +19,7 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
             {/* Conteúdo Central */}
             <main className="flex-1">
                 <HeaderUi />
-                <div className={`w-full bg-slate-50 rounded-4xl min-h-screen  ${isDesktop ? "p-6" : "p-0"}`}>
+                <div className={`w-full bg-slate-50 dark:bg-neutral-950 rounded-4xl min-h-screen  ${isDesktop ? "p-6" : "p-0"}`}>
                     {/* Conteúdo Principal */}
                     <div className="flex flex-col mx-auto max-w-6xl">
                         {children}
