@@ -9,7 +9,7 @@ interface CardProgressItemProps {
 
 export function CardProgressItem({ title, icon, color, children }: CardProgressItemProps) {
     return (
-        <div className="bg-white rounded-xl shadow-md p-8">
+        <div className="bg-card rounded-xl shadow-md p-8">
 
             <div className="flex items-center gap-4 mb-8">
                 <div className={`w-12 h-12 rounded-md flex items-center justify-center ${color}`}>

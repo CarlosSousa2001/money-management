@@ -1,4 +1,4 @@
-import { Home, CreditCard, Clipboard, DollarSign, Settings, HelpCircle, AlignJustify } from "lucide-react";
+import { Home, CreditCard, Clipboard, DollarSign, Settings, HelpCircle, AlignJustify, WalletCards } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { JSX, useState } from "react";
@@ -28,6 +28,7 @@ export function SideBarShadcnUi() {
         { path: "/home", name: "Dashboard", icon: <Home size={20} />, module: "Home" },
         { path: "/transactions/new", name: "Transactions", icon: <CreditCard size={20} />, module: "Utilities" },
         { path: "/plan", name: "Plan", icon: <Clipboard size={20} />, module: "Utilities" },
+        { path: "/credit-card/new", name: "Credit card", icon: <WalletCards size={20} />, module: "Utilities" },
         { path: "/budget", name: "Budget", icon: <DollarSign size={20} />, module: "Utilities" },
         { path: "/settings", name: "Settings", icon: <Settings size={20} />, module: "Utilities" },
         { path: "/help", name: "Help", icon: <HelpCircle size={20} />, module: "Extra" },
@@ -38,12 +39,12 @@ export function SideBarShadcnUi() {
     return (
         <Sheet>
             <SheetTrigger>
-                <AlignJustify className="text-black" />
+                <AlignJustify className="text-black dark:text-white" />
             </SheetTrigger>
             <SheetContent side="left" >
                 <SheetHeader>
                     <SheetTitle className="text-2xl font-extrabold mb-6 b bg-green-400 text-white p-3 rounded-lg mt-4">
-                       💰 MoneyFlow
+                        💰 MoneyFlow
                     </SheetTitle>
                     <SheetDescription>
                     </SheetDescription>
