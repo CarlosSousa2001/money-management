@@ -22,6 +22,9 @@ export async function signInWithEmailAndPassword(data: FormData) {
 
     const { email, password } = result.data
 
+    console.log('email', email)
+    console.log('password', password)
+
     try {
         const token = await SignInWithEmailAndPassword({
             email,
@@ -38,8 +41,8 @@ export async function signInWithEmailAndPassword(data: FormData) {
 
     } catch (err) {
         if (err) {
-
-            return { success: false, message: "error", errors: null }
+                console.error(err)
+            return { success: false, message: "Email os senha inválidos", errors: null }
         }
 
         console.error(err)
