@@ -45,7 +45,7 @@ export function HomeDataTable() {
 
     return (
         <div className="grid grid-cols-1 gap-4">
-            <div className="w-full dark:bg-neutral-900 rounded-lg shadow-md flex-1 ">
+            <div className="w-full bg-card rounded-lg shadow-md flex-1 ">
                 <div className="p-6 flex max-md:flex-col items-center justify-between">
                     <span className="leading-none font-semibold text-xl flex-2">Transactions</span>
                     <div className="flex items-center justify-end flex-1 gap-1 max-md:mt-4">
