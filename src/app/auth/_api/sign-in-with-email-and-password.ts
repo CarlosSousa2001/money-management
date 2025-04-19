@@ -18,7 +18,7 @@ interface SignInWithEmailAndPasswordResponse {
 export async function SignInWithEmailAndPassword({ email, password }: SignInWithEmailAndPassword) {
 
     const response = await http
-        .post("authentication/sign-in", {
+        .post("auth/sign-in", {
             json: {
                 email,
                 password,

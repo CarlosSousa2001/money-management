@@ -4,7 +4,7 @@ import { http } from "@/lib/http";
 export async function validateToken(token: string) {
 
     const response = await http
-        .post("authentication/validate-token", {
+        .post("auth/validate-token", {
             json: {
                 token,
             },
