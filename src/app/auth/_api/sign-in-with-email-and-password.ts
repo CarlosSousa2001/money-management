@@ -9,7 +9,7 @@ interface SignInWithEmailAndPasswordResponse {
     data: {
         name: string;
         email: string;
-        jwtToken: string;
+        jwToken: string;
     }
     message: string;
     success: boolean;
@@ -18,12 +18,12 @@ interface SignInWithEmailAndPasswordResponse {
 export async function SignInWithEmailAndPassword({ email, password }: SignInWithEmailAndPassword) {
 
     const response = await http
-        .post("auth/sign-up", {
+        .post("authentication/sign-in", {
             json: {
                 email,
                 password,
             },
         }).json<SignInWithEmailAndPasswordResponse>();
 
-    return response.data.jwtToken;
+    return response.data.jwToken;
 }

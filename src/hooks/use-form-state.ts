@@ -1,5 +1,4 @@
-import { FormEvent, useState, useTransition } from 'react'
-import { requestFormReset } from 'react-dom'
+import { FormEvent, useState } from 'react'
 import { toast } from 'sonner'
 
 interface FormState {
@@ -14,7 +13,7 @@ export function useFormState(
   initialState?: FormState,
   auth?: boolean,
 ) {
-  const [isPending, startTransition] = useTransition()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [formState, setFormState] = useState(
     initialState ?? { success: false, message: null, errors: null },
@@ -26,24 +25,30 @@ export function useFormState(
     const form = event.currentTarget
     const data = new FormData(form)
 
-    startTransition(async () => {
+    setIsSubmitting(true)
+
+    try {
       const state = await action(data)
 
       if (state.success && onSuccess) {
         toast.success("Sucesso!!")
         await onSuccess()
       }
+
       if (auth) {
         // const user_datails = await getDetailsMe()
-
         // localStorage.setItem('user', JSON.stringify(user_datails))
       }
 
       setFormState(state)
-    })
 
-    requestFormReset(form)
+      if (state.success) {
+        form.reset() // ✅ Corrigido aqui
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  return [formState, handleSubmit, isPending] as const
+  return [formState, handleSubmit, isSubmitting] as const
 }
