@@ -19,7 +19,7 @@ interface SignInWithEmailAndPasswordResponse {
 export async function signUp({ name, email, password }: SignUpWithEmailAndPassword) {
 
     const response = await http
-        .post("authentication/sign-up", {
+        .post("auth/sign-up", {
             json: {
                 name,
                 email,
