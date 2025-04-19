@@ -15,53 +15,45 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const router = useRouter();
-    const pathname = usePathname(); // Obtém a URL atual
+    const pathname = usePathname();
 
-    // Definição das rotas públicas (não precisam de autenticação)
     const publicRoutes = [
         '/auth/sign-in',
         '/auth/sign-up',
         '/auth/forgot-password',
-        '/auth/reset-password/[token]',
+        '/auth/reset-password',
     ];
 
     useEffect(() => {
-        const token = getCookie('token') as string;
+        const token = getCookie('token');
+        const isPublic = publicRoutes.some(route => pathname.startsWith(route));
 
-        // Se a rota for pública, não faz redirecionamento
-        if (publicRoutes.includes(pathname)) {
+        if (isPublic) {
             setLoading(false);
             return;
         }
 
-        // Se não tiver token e estiver em uma rota protegida, redireciona para login
         if (!token) {
-            console.log('Usuário não autenticado dentro do context');
             setIsAuthenticated(false);
             setLoading(false);
             router.push('/auth/sign-in');
             return;
         }
 
-        // Se houver token, valida o token na API
         const authenticateUser = async () => {
-            if (token) {
-                const response = await validateToken(token);
-                if (response.valid) {
-                    setIsAuthenticated(true);
-                } else {
-                    setIsAuthenticated(false);
-                    router.push('/auth/sign-in');
-                }
+            const isValid = await validateToken(token as string);
+            if (isValid) {
+                setIsAuthenticated(true);
             } else {
                 setIsAuthenticated(false);
                 router.push('/auth/sign-in');
             }
+
             setLoading(false);
         };
 
         authenticateUser();
-    }, [router, pathname]);
+    }, [pathname]);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, loading }}>

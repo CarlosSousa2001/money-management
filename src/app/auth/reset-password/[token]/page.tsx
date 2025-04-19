@@ -1,12 +1,10 @@
 import { ResetPasswordForm } from "./reset-password-form";
 
-interface Props {
-    params: {
-        token: string
-    }
-}
+type tParams = Promise<{ slug: string[] }>;
 
-export default async function SignInPage({ params }: Props) {
-    const token = params.token
-    return <ResetPasswordForm token={{ token }}/>
+
+export default async function SignInPage({ params }: { params: tParams }) {
+    const { slug }: { slug: string[] } = await params; // fix this line
+    const token = slug[1];
+    return <ResetPasswordForm token={{ token }} />
 }
