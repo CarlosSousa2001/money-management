@@ -30,7 +30,6 @@ export async function signUpActionsForms(data: FormData) {
 
     } catch (err) {
         if (err) {
-
             return { success: false, message: "error", errors: null }
         }
 

@@ -22,8 +22,6 @@ export async function signInWithEmailAndPassword(data: FormData) {
 
     const { email, password } = result.data
 
-    console.log('email', email)
-    console.log('password', password)
 
     try {
         const token = await SignInWithEmailAndPassword({
