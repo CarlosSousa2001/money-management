@@ -25,15 +25,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { profileDefaultValues, profileFormSchema, ProfileFormValues } from "./_zod/user-schema"
+import { profileDefaultValues, profileFormSchema, ProfileFormValues } from "../_zod/user-schema"
 import { formatPhone } from "@/utils/format-phone"
 import { DateTimePicker } from "@/components/extends/date-picker"
 import { ptBR } from "date-fns/locale"
 import { getAddressByZipCode } from "@/utils/viacep-get-addresses-http"
 import { useEffect, useRef } from "react"
 import { Search } from "lucide-react"
-import { uploadFileMinio } from "./_api/upload-file-minio"
 import Image from "next/image"
+import { uploadFileMinio } from "./upload-file-minio"
 
 
 
@@ -45,8 +45,6 @@ export function UsersProfileForm() {
   })
 
   const { register, setValue, watch, formState: { errors }, getValues } = form
-
-  const imageProfile = watch("imgUrl")
 
   console.log(errors)
 
@@ -137,11 +135,7 @@ export function UsersProfileForm() {
 
         <div className="flex items-center gap-4">
           <div className="w-22 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-            {imageProfile ? (
-              <Image src={imageProfile} width={100} height={100} alt="profile-image-user" />
-            ) : (
-              <img className="w-[120px] h-[160px] bg-white" />
-            )}
+            <Image src={getValues("imgUrl") || ""} width={100} height={100} alt="profile-image-user" />
           </div>
           <div className="flex items-center gap-2">
             <Input

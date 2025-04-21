@@ -10,7 +10,7 @@ interface SignInWithEmailAndPasswordResponse {
     data: {
         name: string;
         email: string;
-        jwtToken: string;
+        jwToken: string;
     }
     message: string;
     success: boolean;
@@ -27,5 +27,5 @@ export async function signUp({ name, email, password }: SignUpWithEmailAndPasswo
             },
         }).json<SignInWithEmailAndPasswordResponse>();
 
-    return response.data.jwtToken;
+    return response.data.jwToken;
 }

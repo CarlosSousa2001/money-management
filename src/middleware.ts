@@ -4,8 +4,7 @@ import { validateToken } from './app/auth/_api/validate-token';
 
 export function middleware(request: NextRequest) {
 
-    const token = request.cookies.get("token")?.value;
-    console.log(token)
+    const token = request.cookies.get("sshtk")?.value;
 
     if (!token) {
         return NextResponse.redirect(new URL('/auth/sign-in', request.nextUrl))

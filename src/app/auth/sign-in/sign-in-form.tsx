@@ -26,7 +26,7 @@ export function SignInForm() {
   const [{ errors, message, success }, handleSubmit, isPending] = useFormState(
     signInWithEmailAndPassword,
     () => {
-      router.push('/')
+      router.push('/home')
     },
     undefined,
     true,
@@ -44,7 +44,7 @@ export function SignInForm() {
             {success === false && message && (
               <Alert variant="destructive">
                 <AlertTriangle className="size-4" />
-                <AlertTitle>Sign in failed!</AlertTitle>
+                <AlertTitle>Erro ao realizar login!</AlertTitle>
                 <AlertDescription>
                   <p>{message}</p>
                 </AlertDescription>

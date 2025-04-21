@@ -22,6 +22,7 @@ export async function signInWithEmailAndPassword(data: FormData) {
 
     const { email, password } = result.data
 
+
     try {
         const token = await SignInWithEmailAndPassword({
             email,
@@ -30,16 +31,16 @@ export async function signInWithEmailAndPassword(data: FormData) {
 
         const cookieStore = await cookies();
 
-        cookieStore.set('token', token, {
+        cookieStore.set('sshtk', token, {
             path: '/',
-            maxAge: 60 * 60 * 24 * 7, // 7 days
+            maxAge: 60 * 60 * 7, // 7 days
             secure: process.env.NODE_ENV === 'production',
         })
 
     } catch (err) {
         if (err) {
-
-            return { success: false, message: "error", errors: null }
+            console.error(err)
+            return { success: false, message: "Email os senha inválidos", errors: null }
         }
 
         console.error(err)

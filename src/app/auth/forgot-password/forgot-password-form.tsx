@@ -33,10 +33,10 @@ export function ForgotPasswordForm() {
     setSuccessMessage(null)
 
     try {
-      const response = await forgotPassword(email)
+      await forgotPassword(email)
 
       setSuccessMessage('Link de recuperação enviado com sucesso!')
-      // setTimeout(() => router.push('/auth/sign-in'), 2000)
+      setTimeout(() => router.push('/auth/sign-in'), 2000)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err?.message || 'Erro ao enviar link de recuperação')
@@ -49,7 +49,7 @@ export function ForgotPasswordForm() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-200 via-white to-blue-200 px-4">
       <Card className="w-full max-w-lg shadow-lg rounded-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-gray-800">
+          <CardTitle className="text-2xl font-bold">
             Esqueceu a senha?
           </CardTitle>
           <CardDescription>
