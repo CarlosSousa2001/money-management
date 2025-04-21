@@ -31,15 +31,15 @@ export async function signInWithEmailAndPassword(data: FormData) {
 
         const cookieStore = await cookies();
 
-        cookieStore.set('token', token, {
+        cookieStore.set('sshtk', token, {
             path: '/',
-            maxAge: 60 * 60 * 24 * 7, // 7 days
+            maxAge: 60 * 60 * 7, // 7 days
             secure: process.env.NODE_ENV === 'production',
         })
 
     } catch (err) {
         if (err) {
-                console.error(err)
+            console.error(err)
             return { success: false, message: "Email os senha inválidos", errors: null }
         }
 

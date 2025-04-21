@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     ];
 
     useEffect(() => {
-        const token = getCookie('token');
+        const token = getCookie('sshtk');
         const isPublic = publicRoutes.some(route => pathname.startsWith(route));
 
         if (isPublic) {
