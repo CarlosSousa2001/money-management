@@ -25,85 +25,166 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { profileDefaultValues, profileFormSchema, ProfileFormValues } from "./_zod/user-schema"
+import { formatPhone } from "@/utils/format-phone"
+import { DateTimePicker } from "@/components/extends/date-picker"
+import { ptBR } from "date-fns/locale"
+import { getAddressByZipCode } from "@/utils/viacep-get-addresses-http"
+import { useEffect, useRef, useState } from "react"
+import { LoaderCircle, Search } from "lucide-react"
+import { uploadFileMinio } from "./_api/upload-file-minio"
+import Image from "next/image"
+import { updateUser } from "./_api/update-user"
+import { useGetUserDetails } from "./hooks/use-get-user-datails"
+import { useUserFormActions } from "./hooks/use-user-form-actions"
+import { format, parseISO } from "date-fns"
+import { UserProfileFormSkeleton } from "./user-profile-form-skeleton"
+import { useUpdateUser } from "./hooks/use-update-user"
 
-const profileFormSchema = z.object({
-  img: z.string().optional(),
-  username: z
-    .string()
-    .min(2, {
-      message: "Username must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "Username must not be longer than 30 characters.",
-    }),
-  email: z
-    .string({
-      required_error: "Please select an email to display.",
-    })
-    .email(),
-  bio: z.string().max(160).min(4),
-  urls: z
-    .array(
-      z.object({
-        value: z.string().url({ message: "Please enter a valid URL." }),
-      })
-    )
-    .optional(),
-})
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>
-
-// This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {
-  bio: "I own a computer.",
-  urls: [
-    { value: "https://shadcn.com" },
-    { value: "http://twitter.com/shadcn" },
-  ],
-}
 
 export function UsersProfileForm() {
+
+  const { data: user, isLoading, error, refetch: manualRefetch } = useGetUserDetails();
+  const { handleUpdateUser, loadingUpdate, error: errorUpdateUser } = useUpdateUser();
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues,
+    defaultValues: profileDefaultValues,
     mode: "onChange",
   })
 
+  const { reset, register, setValue, watch, formState: { errors }, getValues } = form
+
+  const { resetUserForm } = useUserFormActions(reset);
+
+  const imageProfile = watch("imgUrl")
+
+  console.log(errors)
+
   const { fields, append } = useFieldArray({
-    name: "urls",
+    name: "addresses",
     control: form.control,
   })
 
-  function onSubmit(data: ProfileFormValues) {
+  const zipCode = watch(`addresses.${fields.length - 1}.zipCode`)
+
+  async function fetchAddresViaCep() {
+
+    if (!zipCode) return
+    if (zipCode.length < 8) return
+
+    const res = await getAddressByZipCode(zipCode)
+    setValue(`addresses.${fields.length - 1}.street`, res.street)
+    setValue(`addresses.${fields.length - 1}.city`, res.city)
+    setValue(`addresses.${fields.length - 1}.state`, res.state)
+    setValue(`addresses.${fields.length - 1}.zipCode`, res.zip_code)
+    setValue(`addresses.${fields.length - 1}.neighborhood`, res.neighborhood)
+    setValue(`addresses.${fields.length - 1}.complement`, res.complement)
   }
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  async function onSubmit(data: ProfileFormValues) {
+
+    const file = fileInputRef.current?.files?.[0];
+
+    if (file) {
+
+      const res = await uploadFileMinio({
+        fileName: file.name,
+        contentType: file.type,
+      });
+
+      const uploadUrl = decodeURIComponent(res.data.uploadUrl);
+      const publicUrl = res.data.fileUrl
+      console.log("uploadUrl", publicUrl)
+
+      setValue("imgUrl", publicUrl);
+
+      await uploadToMinio(file, uploadUrl);
+    }
+
+    const addresses = data.addresses?.map(address => {
+      // remove o id se estiver vazio ou undefined
+      if (!address.id) {
+        const { id, ...rest } = address;
+        return rest;
+      }
+      return address;
+    });
+    console.log(data)
+
+    const birthDateFormatted = data.birthDate ? format(parseISO(data.birthDate), 'yyyy-MM-dd') : '';
+
+    handleUpdateUser(data)
+  }
+
+
+  async function uploadToMinio(file: File, presignedUrl: string) {
+    try {
+      const formData = new FormData();
+      formData.append("file", file); // nome do campo não importa com presigned PUT
+
+      const response = await fetch(presignedUrl, {
+        method: "PUT",
+        body: file, // <- diretamente o arquivo, não FormData
+        headers: {
+          'Content-Type': file.type, // ex: image/jpeg
+        }
+      });
+
+      if (!response.ok) {
+        console.log("Erro ao fazer upload do arquivo:", response.statusText);
+      }
+
+      console.log("Upload feito com sucesso!");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    if (user) {
+      resetUserForm(user)
+    }
+  }, [user])
+
+  if (isLoading) return <UserProfileFormSkeleton />
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
 
         <div className="flex items-center gap-4">
           <div className="w-22 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-            <span className="text-sm text-gray-500">IMG</span>
+            {imageProfile ? (
+              <Image src={imageProfile} width={100} height={100} alt="profile-image-user" />
+            ) : (
+              <img className="w-[120px] h-[160px] bg-white" />
+            )}
           </div>
-          <Input
-            type="file"
-            accept="image/*"
-            className="file:px-2 file:rounded-md file:bg-blue-500 file:text-white hover:file:bg-blue-600"
-          />
+          <div className="flex items-center gap-2">
+            <Input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              className="file:px-2 file:rounded-md file:bg-blue-500 file:text-white hover:file:bg-blue-600"
+            />
+          </div>
         </div>
 
         <FormField
           control={form.control}
-          name="username"
+          name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Nome</FormLabel>
               <FormControl>
                 <Input placeholder="shadcn" {...field} />
               </FormControl>
               <FormDescription>
-                This is your public display name. It can be your real name or a
-                pseudonym. You can only change this once every 30 days.
+                Esse é o nome que será exibido para os outros usuários.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -115,80 +196,164 @@ export function UsersProfileForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a verified email to display" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="m@example.com">m@example.com</SelectItem>
-                  <SelectItem value="m@google.com">m@google.com</SelectItem>
-                  <SelectItem value="m@support.com">m@support.com</SelectItem>
-                </SelectContent>
-              </Select>
+              <FormControl>
+                <Input placeholder="teste@gmail.com" {...field} />
+              </FormControl>
               <FormDescription>
-                You can manage verified email addresses in your{" "}
-                <Link href="/examples/forms">email settings</Link>.
+                Esse é o email que será exibido para os outros usuários.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="bio"
+          name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Bio</FormLabel>
+              <FormLabel>Telefone</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Tell us a little bit about yourself"
-                  className="resize-none"
-                  {...field}
+                <Input
+                  placeholder="(98) 9 9999 9999"
+                  value={field.value}
+                  onChange={(e) => field.onChange(formatPhone(e.target.value))}
                 />
               </FormControl>
               <FormDescription>
-                You can <span>@mention</span> other users and organizations to
-                link to them.
+                Número de celular no formato (98) 9 9999 9999.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
+
+        <FormField
+          control={form.control}
+          name="birthDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Aniversário</FormLabel>
+              <FormControl>
+                {/* <Input type="date" {...field} /> */}
+                <DateTimePicker
+                  locale={ptBR}
+                  granularity="day"
+                  placeholder="Selecione uma data"
+                  value={field.value ? new Date(field.value) : undefined}
+                  onChange={(date: Date | undefined) =>
+                    field.onChange(date ? date.toISOString() : null)
+                  } />
+              </FormControl>
+              <FormDescription>
+                Qual o seu aniversário? Não se preocupe, não vamos contar para ninguém.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div>
           {fields.map((field, index) => (
-            <FormField
-              control={form.control}
-              key={field.id}
-              name={`urls.${index}.value`}
-              render={({ field }) => (
-                <FormItem className="my-2">
-                  <FormLabel className={cn(index !== 0 && "sr-only")}>
-                    URLs
-                  </FormLabel>
-                  <FormDescription className={cn(index !== 0 && "sr-only")}>
-                    Add links to your website, blog, or social media profiles.
-                  </FormDescription>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div key={field.id} className="grid grid-cols-2 gap-4">
+              <div className="col-span-2 flex items-center justify-between gap-4">
+                <FormField
+                  control={form.control}
+                  name={`addresses.${index}.zipCode`}
+                  render={({ field }) => (
+                    <FormItem className="w-full max-w-[200px]">
+                      <FormLabel>CEP</FormLabel>
+                      <FormControl>
+                        <div className="flex items-center">
+                          <Input {...field} />
+                          <Search className="size-5 -ml-8" onClick={() => fetchAddresViaCep()} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+
+                <FormField
+                  control={form.control}
+                  name={`addresses.${index}.street`}
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Rua</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name={`addresses.${index}.neighborhood`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bairro</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`addresses.${index}.complement`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Complemento</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`addresses.${index}.city`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cidade</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`addresses.${index}.state`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Estado</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           ))}
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="mt-2"
-            onClick={() => append({ value: "" })}
-          >
-            Add URL
-          </Button>
+
         </div>
-        <Button type="submit">Update profile</Button>
+        {loadingUpdate ? (
+          <Button type="button" disabled={loadingUpdate}>
+            <LoaderCircle className="size-5 w-24" />
+          </Button>
+        ) : (
+          <Button type="submit" disabled={loadingUpdate} className="w-28">Atualizar perfil</Button>
+        )}
+
       </form>
     </Form>
   )

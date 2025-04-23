@@ -12,12 +12,12 @@ export const http = ky.create({
         if (typeof window === "undefined") {
           const headersModule = await import("next/headers");
           const cookieStore = await headersModule.cookies();
-          const token = cookieStore.get("token")?.value;
+          const token = cookieStore.get("sshtk")?.value;
           if (token) {
             request.headers.set("Authorization", `Bearer ${token}`);
           }
         } else {
-          const token = getCookie("token");
+          const token = getCookie("sshtk");
           if (token) {
             request.headers.set("Authorization", `Bearer ${token}`);
           }
