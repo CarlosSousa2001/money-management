@@ -24,7 +24,7 @@ export function HeaderUi() {
     const isDesktop = useMediaQuery("(min-width: 788px)");
 
     function handleLogout() {
-        setCookie("token", "", { maxAge: -1 });
+        setCookie("sshtk", "", { maxAge: -1 });
         router.push("/auth/sign-in");
     }
     return (

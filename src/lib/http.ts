@@ -21,7 +21,6 @@ export const http = ky.create({
           if (token) {
             request.headers.set("Authorization", `Bearer ${token}`);
           }
-          console.log("Antes da requisição : " + token)
         }
       },
     ],

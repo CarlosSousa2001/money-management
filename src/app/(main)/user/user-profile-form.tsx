@@ -30,21 +30,33 @@ import { formatPhone } from "@/utils/format-phone"
 import { DateTimePicker } from "@/components/extends/date-picker"
 import { ptBR } from "date-fns/locale"
 import { getAddressByZipCode } from "@/utils/viacep-get-addresses-http"
-import { useEffect, useRef } from "react"
-import { Search } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+import { LoaderCircle, Search } from "lucide-react"
 import { uploadFileMinio } from "./_api/upload-file-minio"
 import Image from "next/image"
+import { updateUser } from "./_api/update-user"
+import { useGetUserDetails } from "./hooks/use-get-user-datails"
+import { useUserFormActions } from "./hooks/use-user-form-actions"
+import { format, parseISO } from "date-fns"
+import { UserProfileFormSkeleton } from "./user-profile-form-skeleton"
+import { useUpdateUser } from "./hooks/use-update-user"
 
 
 
 export function UsersProfileForm() {
+
+  const { data: user, isLoading, error, refetch: manualRefetch } = useGetUserDetails();
+  const { handleUpdateUser, loadingUpdate, error: errorUpdateUser } = useUpdateUser();
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: profileDefaultValues,
     mode: "onChange",
   })
 
-  const { register, setValue, watch, formState: { errors }, getValues } = form
+  const { reset, register, setValue, watch, formState: { errors }, getValues } = form
+
+  const { resetUserForm } = useUserFormActions(reset);
 
   const imageProfile = watch("imgUrl")
 
@@ -55,7 +67,7 @@ export function UsersProfileForm() {
     control: form.control,
   })
 
-  const zipCode = watch(`addresses.${fields.length - 1}.zip_code`)
+  const zipCode = watch(`addresses.${fields.length - 1}.zipCode`)
 
   async function fetchAddresViaCep() {
 
@@ -66,39 +78,46 @@ export function UsersProfileForm() {
     setValue(`addresses.${fields.length - 1}.street`, res.street)
     setValue(`addresses.${fields.length - 1}.city`, res.city)
     setValue(`addresses.${fields.length - 1}.state`, res.state)
-    setValue(`addresses.${fields.length - 1}.zip_code`, res.zip_code)
-    setValue(`addresses.${fields.length - 1}.country`, res.country)
+    setValue(`addresses.${fields.length - 1}.zipCode`, res.zip_code)
+    setValue(`addresses.${fields.length - 1}.neighborhood`, res.neighborhood)
     setValue(`addresses.${fields.length - 1}.complement`, res.complement)
-  }
-
-  function onSubmit(data: ProfileFormValues) {
-    console.log(data)
   }
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  async function onSubmit(data: ProfileFormValues) {
 
-  async function handleUploadFile() {
     const file = fileInputRef.current?.files?.[0];
 
-    console.log(file)
+    if (file) {
 
-    if (!file) {
-      console.warn("Nenhum arquivo selecionado");
-      return;
+      const res = await uploadFileMinio({
+        fileName: file.name,
+        contentType: file.type,
+      });
+
+      const uploadUrl = decodeURIComponent(res.data.uploadUrl);
+      const publicUrl = res.data.fileUrl
+      console.log("uploadUrl", publicUrl)
+
+      setValue("imgUrl", publicUrl);
+
+      await uploadToMinio(file, uploadUrl);
     }
 
-    const res = await uploadFileMinio({
-      fileName: file.name,
-      contentType: file.type,
+    const addresses = data.addresses?.map(address => {
+      // remove o id se estiver vazio ou undefined
+      if (!address.id) {
+        const { id, ...rest } = address;
+        return rest;
+      }
+      return address;
     });
+    console.log(data)
 
-    const uploadUrl = decodeURIComponent(res.data.uploadUrl);
-    const publicUrl = res.data.fileUrl
+    const birthDateFormatted = data.birthDate ? format(parseISO(data.birthDate), 'yyyy-MM-dd') : '';
 
-    await uploadToMinio(file, uploadUrl);
-
-    setValue("imgUrl", publicUrl);
+    handleUpdateUser(data)
   }
 
 
@@ -116,7 +135,7 @@ export function UsersProfileForm() {
       });
 
       if (!response.ok) {
-        throw new Error("Erro ao enviar imagem para o MinIO");
+        console.log("Erro ao fazer upload do arquivo:", response.statusText);
       }
 
       console.log("Upload feito com sucesso!");
@@ -125,11 +144,13 @@ export function UsersProfileForm() {
     }
   }
 
+  useEffect(() => {
+    if (user) {
+      resetUserForm(user)
+    }
+  }, [user])
 
-
-  // useEffect(() => {
-  //   fetchAddresViaCep
-  // }, [fetchAddresViaCep])
+  if (isLoading) return <UserProfileFormSkeleton />
 
   return (
     <Form {...form}>
@@ -150,7 +171,6 @@ export function UsersProfileForm() {
               ref={fileInputRef}
               className="file:px-2 file:rounded-md file:bg-blue-500 file:text-white hover:file:bg-blue-600"
             />
-            <Button type="button" onClick={() => handleUploadFile()}>Enviar</Button>
           </div>
         </div>
 
@@ -240,7 +260,7 @@ export function UsersProfileForm() {
               <div className="col-span-2 flex items-center justify-between gap-4">
                 <FormField
                   control={form.control}
-                  name={`addresses.${index}.zip_code`}
+                  name={`addresses.${index}.zipCode`}
                   render={({ field }) => (
                     <FormItem className="w-full max-w-[200px]">
                       <FormLabel>CEP</FormLabel>
@@ -272,10 +292,10 @@ export function UsersProfileForm() {
               </div>
               <FormField
                 control={form.control}
-                name={`addresses.${index}.country`}
+                name={`addresses.${index}.neighborhood`}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>País</FormLabel>
+                    <FormLabel>Bairro</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -326,7 +346,14 @@ export function UsersProfileForm() {
           ))}
 
         </div>
-        <Button type="submit">Atualizar perfil</Button>
+        {loadingUpdate ? (
+          <Button type="button" disabled={loadingUpdate}>
+            <LoaderCircle className="size-5 w-24" />
+          </Button>
+        ) : (
+          <Button type="submit" disabled={loadingUpdate} className="w-28">Atualizar perfil</Button>
+        )}
+
       </form>
     </Form>
   )

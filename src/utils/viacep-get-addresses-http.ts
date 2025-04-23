@@ -11,7 +11,7 @@ export async function getAddressByZipCode(zipCode: string) {
             city: "",
             state: "",
             zip_code: "",
-            country: "",
+            neighborhood: "",
             complement: "",
         }
     }
@@ -20,7 +20,7 @@ export async function getAddressByZipCode(zipCode: string) {
         city: data.localidade,
         state: data.uf,
         zip_code: data.cep,
-        country: data.bairro,
+        neighborhood: data.bairro,
         complement: data.complemento,
     }
 }
