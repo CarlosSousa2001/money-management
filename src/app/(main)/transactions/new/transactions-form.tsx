@@ -43,6 +43,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import {
+  Dialog,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { gelAllPayerOrReceiver } from "../_api/get-all-payer-or-receiver"
+import { PayerOrReceiverDialogForm } from "./payer-or-receiver-dialog-form"
+import { translateTransactionType } from "@/utils/translations-transaction-type"
+import { translateTransactionStatus } from "@/utils/translations-transactions-status"
+import { translateTransactionCategory } from "@/utils/translations-transaction-category"
 
 // Exemplo de dados para os cartões
 const datacardmocks = [
@@ -92,6 +101,7 @@ const datacardmocks = [
 export function TransactionsForm() {
 
   const [open, setOpen] = useState(false)
+  const [openDialogNewPayerOrReceiver, setOpenDialogNewPayorReceiver] = useState(false)
   const [users, setUsers] = useState<{ id: string; name: string }[]>([])
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -150,16 +160,14 @@ export function TransactionsForm() {
     setShowCard(false);
   }, [selectedPaymentType]);
 
-  async function fetchUsers(query: string) {
+  async function fetchUsers(query?: string) {
     // Simulação de chamada ao backend
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const response = await gelAllPayerOrReceiver(query)
 
-    return [
-      { id: "1", name: "Carlos Sousa" },
-      { id: "2", name: "Maria Silva" },
-      { id: "3", name: "João Oliveira" },
-      { id: "4", name: "Fernanda Costa" },
-    ].filter((user) => user.name.toLowerCase().includes(query.toLowerCase()))
+    return response.data.map((user) => ({
+      id: user.id,
+      name: user.name,
+    }))
   }
 
 
@@ -246,7 +254,7 @@ export function TransactionsForm() {
                   <SelectContent>
                     {Object.entries(TransactionStatusBase).map(([key, value]) => (
                       <SelectItem key={value} value={value}>
-                        {value}
+                        {translateTransactionStatus(value)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -272,7 +280,7 @@ export function TransactionsForm() {
                   <SelectContent>
                     {Object.entries(TransactionCategory).map(([key, value]) => (
                       <SelectItem key={value} value={value}>
-                        {value}
+                        {translateTransactionCategory(value)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -298,7 +306,7 @@ export function TransactionsForm() {
                   <SelectContent>
                     {Object.entries(TransactionTypeBase).map(([key, value]) => (
                       <SelectItem key={value} value={value}>
-                        {value}
+                        {translateTransactionType(value)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -371,7 +379,13 @@ export function TransactionsForm() {
                   />
                 </div>
                 <CommandList>
-                  <CommandEmpty>No user found.</CommandEmpty>
+                  <div className="flex flex-col justify-center gap-2 p-2">
+                    <CommandEmpty>Nenhum usuário encontrado</CommandEmpty>
+                    <Dialog open={openDialogNewPayerOrReceiver} onOpenChange={setOpenDialogNewPayorReceiver}>
+                      <DialogTrigger>Novo pagador/recebedor</DialogTrigger>
+                      <PayerOrReceiverDialogForm onClose={setOpenDialogNewPayorReceiver} setValueContext={setValue} />
+                    </Dialog>
+                  </div>
                   <CommandGroup>
                     {users.map((user) => (
                       <CommandItem
