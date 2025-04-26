@@ -39,7 +39,11 @@ interface Props {
 
 export function PayerOrReceiverDialogFormUpdate({ onClose, item }: Props) {
 
-    const { handleUpdatePayerOrReceiver, loadingUpdate } = useUpdatePayerOrReceiver()
+    const clear = () => {
+        onClose(false)
+    };
+
+    const { mutate: handleUpdatePayerOrReceiver, isPending: isPendingPayerAndReceiver } = useUpdatePayerOrReceiver(clear)
 
     const form = useForm<PayerOrReceiverUpdateSchemaData>({
         mode: "onSubmit",
@@ -58,10 +62,7 @@ export function PayerOrReceiverDialogFormUpdate({ onClose, item }: Props) {
 
     async function onSubmit(data: PayerOrReceiverUpdateSchemaData) {
         console.log(data)
-        const res = await handleUpdatePayerOrReceiver(data)
-        if (!res) return
-        onClose(false)
-        console.log(res)
+        handleUpdatePayerOrReceiver(data)
     }
 
     return (
@@ -135,15 +136,15 @@ export function PayerOrReceiverDialogFormUpdate({ onClose, item }: Props) {
                         )}
                     />
 
-                    {loadingUpdate ? (
-                        <Button type="button" disabled={loadingUpdate}>
+                    {isPendingPayerAndReceiver ? (
+                        <Button type="button" disabled={isPendingPayerAndReceiver}>
                             <LoaderCircle className="size-5 w-24" />
                         </Button>
                     ) : (
                         <Button
                             type="button"
                             onClick={form.handleSubmit(onSubmit)}
-                            disabled={loadingUpdate}
+                            disabled={isPendingPayerAndReceiver}
                             className="w-28"
                         >
                             salvar

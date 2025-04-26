@@ -10,7 +10,7 @@ export async function updatePayerOrReceiver({
 }: PayerOrReceiverUpdate) {
 
     const response = await http
-        .post(`payer-receivers/${id}`, {
+        .put(`payer-receivers/${id}`, {
             json: {
                 id,
                 name,

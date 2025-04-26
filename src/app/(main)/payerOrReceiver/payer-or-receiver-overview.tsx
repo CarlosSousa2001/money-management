@@ -2,47 +2,39 @@
 import {
     Table,
     TableBody,
+    TableCell,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import { DataTablePagination } from "@/components/pagination-base";
 import { PayerOrReceiverTableRow } from "./payer-or-receiver-table-row";
-import { useEffect, useState } from "react";
-import { PayerOrReceiverResponse } from "../transactions/types/transactions-schema-types";
-import { gelAllPayerOrReceiver } from "./_api/get-all-payer-or-receiver";
-import { TransactionPayerReceiverBase } from "../home/types/home-types-schema";
+import { useState } from "react";
+import { useGetAllPayerOrReceiver } from "./hooks/use-get-all-payer-or-receiver";
+import { CirclePlus } from "lucide-react";
+import { PayerOrReceiverDialogForm } from "../transactions/new/payer-or-receiver-dialog-form";
 
 export function PayerOrReceiverOverview() {
 
-    const [items, setItems] = useState<PayerOrReceiverResponse>({
-        data: [],
-        meta: {
-            totalItems: 0,
-            totalPages: 1,
-            page: 1,
-            perPage: 10,
-            nextPage: null,
-            prevPage: null,
-        },
-    });
+    const [openDialogNewPayerOrReceiver, setOpenDialogNewPayorReceiver] = useState(false)
+    const { data, isLoading, isError } = useGetAllPayerOrReceiver("")
 
     const [currentPage, setCurrentPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
 
-    useEffect(() => {
-        (async () => {
-            const res = await gelAllPayerOrReceiver();
-            console.log('PayerOrReceiver response:', res);
-            setItems(res);
-        })();
-    }, [])
 
-
-    const totalItems = items?.meta.totalItems ?? 0;
-    const totalPages = items?.meta.totalPages ?? 1;
-    const hasNextPage = items?.meta.nextPage ?? false;
-    const hasPrevPage = items?.meta.prevPage ?? false;
+    const totalItems = data?.meta.totalItems ?? 0;
+    const totalPages = data?.meta.totalPages ?? 1;
+    const hasNextPage = data?.meta.nextPage ?? false;
+    const hasPrevPage = data?.meta.prevPage ?? false;
 
 
     const handlePageChange = (newPage: number) => {
@@ -54,21 +46,43 @@ export function PayerOrReceiverOverview() {
         setCurrentPage(1); // Reset para a primeira página ao mudar o tamanho da página
     };
 
+    const rows = data?.data && Array.isArray(data.data) ? data.data : [];
+
     return (
         <div>
-            <div className="max-xs:hidden min-h-[400px]  h-[40vh]  overflow-auto border rounded-md border-gray-200 dark:border-gray-700">
+            <div className="max-xs:hidden min-h-[400px]  h-[60vh]  overflow-auto border rounded-lg bg-slate-100 dark:bg-black/20 border-gray-200 dark:border-gray-700">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="max-w-[40px] w-[40px]"></TableHead>
+                            <TableHead className="max-w-[40px] w-[40px]" onClick={() => setOpenDialogNewPayorReceiver(true)}>
+                                <CirclePlus className="text-emerald-500 hover:text-emerald-400" />
+                            </TableHead>
                             <TableHead className="">Usuário</TableHead>
                             <TableHead className="">Tipo</TableHead>
+                            <TableHead className=""></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {items?.data.map(item => (
-                            <PayerOrReceiverTableRow key={item.id} item={item} />
-                        ))}
+                        {rows.length > 0 ? (
+                            rows.map(item => (
+                                <PayerOrReceiverTableRow key={item.id} item={item} />
+                            ))
+                        ) : (
+                            <TableRow className="h-[90px]">
+                                <TableCell className="">
+                                    <div className="flex items-center justify-center w-full h-full">
+                                        {isLoading ? (
+                                            <p>Carregando...</p>
+                                        ) : isError ? (
+                                            <p>Erro ao carregar os dados</p>
+                                        ) : (
+                                            <p>Nenhum dado encontrado</p>
+                                        )}
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+
+                        )}
                     </TableBody>
                 </Table>
             </div>
@@ -85,6 +99,13 @@ export function PayerOrReceiverOverview() {
                     onPageSizeChange={handlePageSizeChange}
                 />
             </div>
+
+            {openDialogNewPayerOrReceiver && (
+                <Dialog open={openDialogNewPayerOrReceiver} onOpenChange={setOpenDialogNewPayorReceiver}>
+                    <DialogTrigger></DialogTrigger>
+                    <PayerOrReceiverDialogForm onClose={setOpenDialogNewPayorReceiver} isTanstack={true}/>
+                </Dialog>
+            )}
         </div>
     )
 }
