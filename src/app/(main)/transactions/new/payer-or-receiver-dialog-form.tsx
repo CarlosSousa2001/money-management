@@ -30,15 +30,18 @@ import { LoaderCircle } from "lucide-react";
 import { useCreatePayerOrReceiver } from "../../payerOrReceiver/hooks/use-create-payer-or-receiver";
 import { transactionsFormData } from "./zod/transactions-schema";
 import { translatePayerOrReceiver } from "@/utils/translations-payer-or-receiver";
+import { useCreateTanstaclPayerOrReceiver } from "../../payerOrReceiver/hooks/use-create-tanstack-payer-or-receiver";
 
 interface Props {
     onClose: (open: boolean) => void;
     setValueContext?: UseFormSetValue<transactionsFormData>
+    isTanstack?: boolean
 }
 
-export function PayerOrReceiverDialogForm({ onClose, setValueContext }: Props) {
+export function PayerOrReceiverDialogForm({ onClose, setValueContext, isTanstack = false }: Props) {
 
     const { handleCreatePayerOrReceiver, loadingUpdate } = useCreatePayerOrReceiver()
+    const { mutate: handleCreateTanstackPayerOrReceiver, isPending: isPendingPayerAndReceiver } = useCreateTanstaclPayerOrReceiver()
 
     const form = useForm<PayerOrReceiverSchemaData>({
         mode: "onSubmit",
@@ -50,6 +53,12 @@ export function PayerOrReceiverDialogForm({ onClose, setValueContext }: Props) {
     console.log(errors)
 
     async function onSubmit(data: PayerOrReceiverSchemaData) {
+
+        if (isTanstack) {
+            handleCreateTanstackPayerOrReceiver(data)
+            onClose(false)
+            return
+        }
         console.log(data)
         const res = await handleCreatePayerOrReceiver(data)
         if (!res) return
@@ -132,15 +141,15 @@ export function PayerOrReceiverDialogForm({ onClose, setValueContext }: Props) {
                         )}
                     />
 
-                    {loadingUpdate ? (
-                        <Button type="button" disabled={loadingUpdate}>
+                    {loadingUpdate || isPendingPayerAndReceiver ? (
+                        <Button type="button" disabled={loadingUpdate || isPendingPayerAndReceiver}>
                             <LoaderCircle className="size-5 w-24" />
                         </Button>
                     ) : (
                         <Button
                             type="button"
                             onClick={form.handleSubmit(onSubmit)}
-                            disabled={loadingUpdate}
+                            disabled={loadingUpdate || isPendingPayerAndReceiver}
                             className="w-28"
                         >
                             salvar

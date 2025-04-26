@@ -3,9 +3,8 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
-import Image from "next/image"
 import { PayerOrReceiverBaseUnit } from "../transactions/types/transactions-schema-types";
-import { Edit, Ellipsis, EllipsisVertical, Trash } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import { translatePayerOrReceiver } from "@/utils/translations-payer-or-receiver";
 import {
     Avatar,
@@ -28,10 +27,9 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useDeletePayerOrReceiver } from "./hooks/use-delete-payer-or-receiver";
 
 
 
@@ -44,16 +42,18 @@ export function PayerOrReceiverTableRow({ item }: PayerOrReceiverTableRowBase) {
     const [openDialogNewPayerOrReceiver, setOpenDialogNewPayorReceiver] = useState(false)
     const [open, setOpen] = useState(false)
 
+    const { mutate: deletePayerOrReceiver, isPending } = useDeletePayerOrReceiver()
+
     return (
         <TableRow className="h-[90px]">
             <TableCell className="">
 
                 <DropdownMenu open={open} onOpenChange={setOpen}>
-                    <DropdownMenuTrigger>
+                    <DropdownMenuTrigger asChild>
                         <Ellipsis className="size-5" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
-                        <DropdownMenuItem>Excluir</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => deletePayerOrReceiver(item.id)}>Excluir</DropdownMenuItem>
                         <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => {
                             setOpenDialogNewPayorReceiver(true)
                             setOpen(false)
@@ -80,12 +80,15 @@ export function PayerOrReceiverTableRow({ item }: PayerOrReceiverTableRowBase) {
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{translatePayerOrReceiver(item.userType)}</p>
             </TableCell>
 
-            {openDialogNewPayerOrReceiver && (
+
+            <TableCell className="">
                 <Dialog open={openDialogNewPayerOrReceiver} onOpenChange={setOpenDialogNewPayorReceiver}>
-                    <DialogTrigger></DialogTrigger>
+                    <DialogTrigger >
+                    </DialogTrigger>
                     <PayerOrReceiverDialogFormUpdate onClose={setOpenDialogNewPayorReceiver} item={item} />
                 </Dialog>
-            )}
+            </TableCell>
+
 
             {/* <TableCell className="">
                 <Trash className="size-4 text-red-500 hover:text-red-400 cursor-pointer" />

@@ -3,13 +3,17 @@ import { PayerOrReceiverResponse } from "../../transactions/types/transactions-s
 
 export async function gelAllPayerOrReceiver(search?: string) {
 
+    console.log("Executando a função gelAllPayerOrReceiver")
     const response = await http
         .get(`payer-receivers`, {
             searchParams: {
-                name: search || ""
+                search: search || ""
             }
         })
         .json<PayerOrReceiverResponse>();
+
+    console.log("Resposta da função gelAllPayerOrReceiver")
+    console.log(response)
 
     return response;
 }

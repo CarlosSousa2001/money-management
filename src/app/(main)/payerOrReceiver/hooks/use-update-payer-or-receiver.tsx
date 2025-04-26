@@ -1,41 +1,24 @@
-import { useState } from "react";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { createPayerOrReceiver } from "../_api/create-payer-or-receiver";
 import { PayerOrReceiverUpdateSchemaData } from "../zod/payer-or-receiver-schema";
 import { updatePayerOrReceiver } from "../_api/update-payer-or-receiver";
 
-export function useUpdatePayerOrReceiver() {
-    const [loadingUpdate, setLoadingUpdate] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+export function useUpdatePayerOrReceiver(onSuccessCallback: () => void) {
 
-    async function handleUpdatePayerOrReceiver(data: PayerOrReceiverUpdateSchemaData) {
-        try {
-            setLoadingUpdate(true);
-            setError(null);
+    const queryClient = useQueryClient();
 
-
-            const res = await updatePayerOrReceiver({
-                id: data.id,
-                name: data.name,
-                description: data.description,
-                imgUrl: data.imgUrl ?? undefined,
-                userType: data.userType,
-            });
+    return useMutation({
+        mutationFn: (payload: PayerOrReceiverUpdateSchemaData) => updatePayerOrReceiver(payload),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["payer"] });
             toast.success("Usuário atualizado com sucesso!");
-            return res;
-        } catch (err: any) {
-            console.error("Erro ao atualizar usuário:", err);
+            onSuccessCallback();
+        },
+        onError: (error) => {
             toast.error("Erro ao atualizar usuário");
-            setError(err?.message ?? "Erro desconhecido");
-        } finally {
-            setLoadingUpdate(false);
+            console.error(error);
         }
-    }
+    });
 
-    return {
-        handleUpdatePayerOrReceiver,
-        loadingUpdate,
-        error,
-    };
+
 }
