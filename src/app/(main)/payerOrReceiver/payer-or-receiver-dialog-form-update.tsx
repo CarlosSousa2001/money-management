@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormSetValue } from "react-hook-form";
-import { payerOrReceiverSchema, PayerOrReceiverSchemaData } from "../../payerOrReceiver/zod/payer-or-receiver-schema";
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -25,38 +24,42 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input";
-import { TransactionPayerReceiverBase } from "../../home/types/home-types-schema";
 import { LoaderCircle } from "lucide-react";
-import { useCreatePayerOrReceiver } from "../../payerOrReceiver/hooks/use-create-payer-or-receiver";
-import { transactionsFormData } from "./zod/transactions-schema";
 import { translatePayerOrReceiver } from "@/utils/translations-payer-or-receiver";
+import { payerOrReceiverUpdateSchema, PayerOrReceiverUpdateSchemaData } from "./zod/payer-or-receiver-schema";
+import { TransactionPayerReceiverBase } from "../home/types/home-types-schema";
+import { useUpdatePayerOrReceiver } from "./hooks/use-update-payer-or-receiver";
+import { PayerOrReceiverBaseUnit } from "../transactions/types/transactions-schema-types";
+
 
 interface Props {
     onClose: (open: boolean) => void;
-    setValueContext?: UseFormSetValue<transactionsFormData>
+    item: PayerOrReceiverBaseUnit
 }
 
-export function PayerOrReceiverDialogForm({ onClose, setValueContext }: Props) {
+export function PayerOrReceiverDialogFormUpdate({ onClose, item }: Props) {
 
-    const { handleCreatePayerOrReceiver, loadingUpdate } = useCreatePayerOrReceiver()
+    const { handleUpdatePayerOrReceiver, loadingUpdate } = useUpdatePayerOrReceiver()
 
-    const form = useForm<PayerOrReceiverSchemaData>({
+    const form = useForm<PayerOrReceiverUpdateSchemaData>({
         mode: "onSubmit",
-        resolver: zodResolver(payerOrReceiverSchema)
+        resolver: zodResolver(payerOrReceiverUpdateSchema),
+        values: {
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            userType: item.userType,
+        }
     })
 
     const { formState: { errors } } = form
 
     console.log(errors)
 
-    async function onSubmit(data: PayerOrReceiverSchemaData) {
+    async function onSubmit(data: PayerOrReceiverUpdateSchemaData) {
         console.log(data)
-        const res = await handleCreatePayerOrReceiver(data)
+        const res = await handleUpdatePayerOrReceiver(data)
         if (!res) return
-        setValueContext?.("payerOurReceiver", {
-            id: res.data.id,
-            name: res.data.name
-        })
         onClose(false)
         console.log(res)
     }
@@ -64,7 +67,7 @@ export function PayerOrReceiverDialogForm({ onClose, setValueContext }: Props) {
     return (
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Crie um novo pagamento ou recebedor </DialogTitle>
+                <DialogTitle>Atualize o pagamento ou recebedor </DialogTitle>
                 <DialogDescription>
                     Utilize esses usuários para organizar seus pagamentos e recebimentos.
                 </DialogDescription>

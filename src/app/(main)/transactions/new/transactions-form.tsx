@@ -47,7 +47,7 @@ import {
   Dialog,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { gelAllPayerOrReceiver } from "../_api/get-all-payer-or-receiver"
+import { gelAllPayerOrReceiver } from "../../payerOrReceiver/_api/get-all-payer-or-receiver"
 import { PayerOrReceiverDialogForm } from "./payer-or-receiver-dialog-form"
 import { translateTransactionType } from "@/utils/translations-transaction-type"
 import { translateTransactionStatus } from "@/utils/translations-transactions-status"
@@ -164,15 +164,15 @@ export function TransactionsForm() {
     // Simulação de chamada ao backend
     const response = await gelAllPayerOrReceiver(query)
 
-    return response.data.map((user) => ({
+    const res =  response.data.map((user) => ({
       id: user.id,
       name: user.name,
     }))
+    setUsers(res)
   }
 
-
   useEffect(() => {
-    fetchUsers("").then(setUsers) // Busca inicial sem filtro
+    fetchUsers()
   }, [])
 
 
@@ -355,14 +355,14 @@ export function TransactionsForm() {
             onOpenChange={(isOpen) => {
               setOpen(isOpen)
               if (isOpen) {
-                fetchUsers("").then(setUsers) // Recarrega todos os usuários ao abrir
+                fetchUsers("") // Recarrega todos os usuários ao abrir
               }
             }}
           >
             <PopoverTrigger asChild>
               <Button variant="outline" role="combobox" aria-expanded={open} className="col-span-2 justify-between">
                 {selectedUserId
-                  ? users.find((user) => user.id === selectedUserId)?.name
+                  ? selectedUserId.name
                   : "Select user..."}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
@@ -375,7 +375,7 @@ export function TransactionsForm() {
                     type="text"
                     placeholder="Search user..."
                     className="w-full border rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    onChange={(e) => fetchUsers(e.target.value).then(setUsers)}
+                    onChange={(e) => fetchUsers(e.target.value)}
                   />
                 </div>
                 <CommandList>
@@ -392,11 +392,14 @@ export function TransactionsForm() {
                         key={user.id}
                         value={user.id}
                         onSelect={() => {
-                          setValue("payerOurReceiver", user.id) // Salva o ID no form
+                          setValue("payerOurReceiver", {
+                            id: user.id,
+                            name: user.name,
+                          }) // Salva o ID no form
                           setOpen(false)
                         }}
                       >
-                        <Check className={cn("mr-2 h-4 w-4", selectedUserId === user.id ? "opacity-100" : "opacity-0")} />
+                        <Check className={cn("mr-2 h-4 w-4", selectedUserId?.id === user.id ? "opacity-100" : "opacity-0")} />
                         {user.name}
                       </CommandItem>
                     ))}

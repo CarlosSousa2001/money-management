@@ -35,7 +35,10 @@ export const transactionsFormSchema = z.object({
     transactionType: z.nativeEnum(TransactionTypeBase, { required_error: "Please select a transaction type." }),
     transactionCategory: z.nativeEnum(TransactionCategory, { required_error: "Please select a transaction category." }),
     status: z.nativeEnum(TransactionStatusBase, { required_error: "Please select a transaction status." }),
-    payerOurReceiver: z.string().min(1, "Please select a payer or receiver."),
+    payerOurReceiver: z.object({
+        id: z.string(),
+        name: z.string().min(1, "Please select a payer or receiver.")
+    }).optional(),
     amount: z.coerce.number({
         required_error: "Please enter an amount.",
         invalid_type_error: "Please enter a valid amount.",
@@ -64,7 +67,10 @@ export const defaultValuesTransactionsData: Partial<transactionsFormData> = {
     transactionType: undefined,
     transactionCategory: undefined,
     status: undefined,
-    payerOurReceiver: "",
+    payerOurReceiver: {
+        id: "",
+        name: ""
+    },
     amount: 0,
     currency: CurrencyType.BRL,
     TransactionScheduledDate: "",

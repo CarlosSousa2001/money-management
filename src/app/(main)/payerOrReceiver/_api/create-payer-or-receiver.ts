@@ -1,5 +1,5 @@
 import { http } from "@/lib/http";
-import { PayerOrRecebicerResponseSimple, PayerOrReceiverRequest } from "../types/transactions-schema-types";
+import { PayerOrRecebicerResponseSimple, PayerOrReceiverRequest } from "../../transactions/types/transactions-schema-types";
 
 export async function createPayerOrReceiver({
     name,

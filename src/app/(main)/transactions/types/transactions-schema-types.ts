@@ -10,5 +10,8 @@ interface PayerOrReceiverBase {
 }
 
 export type PayerOrReceiverRequest = Omit<PayerOrReceiverBase, "id">
+export type PayerOrReceiverUpdate = PayerOrReceiverBase
+
+export type PayerOrReceiverBaseUnit = PayerOrReceiverBase
 export type PayerOrRecebicerResponseSimple = ResponseDataBaseSimple<PayerOrReceiverBase>
 export type PayerOrReceiverResponse = PaginatedBase<PayerOrReceiverBase>

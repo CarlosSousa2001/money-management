@@ -1,20 +1,22 @@
 import { useState } from "react";
 
 import { toast } from "sonner";
-import { PayerOrReceiverSchemaData } from "../new/zod/payer-or-receiver-schema";
 import { createPayerOrReceiver } from "../_api/create-payer-or-receiver";
+import { PayerOrReceiverUpdateSchemaData } from "../zod/payer-or-receiver-schema";
+import { updatePayerOrReceiver } from "../_api/update-payer-or-receiver";
 
-export function useCreatePayerOrReceiver() {
+export function useUpdatePayerOrReceiver() {
     const [loadingUpdate, setLoadingUpdate] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    async function handleCreatePayerOrReceiver(data: PayerOrReceiverSchemaData) {
+    async function handleUpdatePayerOrReceiver(data: PayerOrReceiverUpdateSchemaData) {
         try {
             setLoadingUpdate(true);
             setError(null);
 
 
-            const res = await createPayerOrReceiver({
+            const res = await updatePayerOrReceiver({
+                id: data.id,
                 name: data.name,
                 description: data.description,
                 imgUrl: data.imgUrl ?? undefined,
@@ -32,7 +34,7 @@ export function useCreatePayerOrReceiver() {
     }
 
     return {
-        handleCreatePayerOrReceiver,
+        handleUpdatePayerOrReceiver,
         loadingUpdate,
         error,
     };

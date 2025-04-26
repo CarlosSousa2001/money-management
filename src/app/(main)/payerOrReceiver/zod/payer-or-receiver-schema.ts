@@ -16,3 +16,19 @@ export const payerOrReceiverSchemaDefault: Partial<PayerOrReceiverSchemaData> = 
     imgUrl: "",
     userType: TransactionPayerReceiverBase.COMPANY
 };
+
+// schemas para update 
+
+export const payerOrReceiverUpdateSchema = payerOrReceiverSchema.extend({
+    id: z.string() // ou só z.string() se não for UUID
+});
+
+export type PayerOrReceiverUpdateSchemaData = z.infer<typeof payerOrReceiverUpdateSchema>;
+
+export const payerOrReceiverUpdateSchemaDefault: Partial<PayerOrReceiverUpdateSchemaData> = {
+    id: "",
+    name: "",
+    description: "",
+    imgUrl: "",
+    userType: TransactionPayerReceiverBase.COMPANY
+};
