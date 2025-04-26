@@ -1,3 +1,9 @@
+export interface PaginatedBaseParams {
+    search?: string;
+    page?: number;
+    perPage?: number;
+}
+
 export interface PaginatedBase<T> {
     data: T[];
     meta: {

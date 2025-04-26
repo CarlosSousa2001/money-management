@@ -1,19 +1,15 @@
 import { http } from "@/lib/http";
 import { PayerOrReceiverResponse } from "../../transactions/types/transactions-schema-types";
+import { PaginatedBaseParams } from "@/utils/paginated-base";
+import { cleanObject } from "@/utils/clean-object-paginated-params";
 
-export async function gelAllPayerOrReceiver(search?: string) {
+export async function gelAllPayerOrReceiver(params?: PaginatedBaseParams) {
 
-    console.log("Executando a função gelAllPayerOrReceiver")
+    const searchParams = params ? cleanObject(params) : undefined;
+
     const response = await http
-        .get(`payer-receivers`, {
-            searchParams: {
-                search: search || ""
-            }
-        })
+        .get(`payer-receivers`, { searchParams })
         .json<PayerOrReceiverResponse>();
-
-    console.log("Resposta da função gelAllPayerOrReceiver")
-    console.log(response)
 
     return response;
 }

@@ -13,10 +13,6 @@ import {
 } from "@/components/ui/avatar"
 import {
     Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { useState } from "react";
@@ -31,6 +27,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useDeletePayerOrReceiver } from "./hooks/use-delete-payer-or-receiver";
 
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from "@/components/ui/hover-card"
 
 
 interface PayerOrReceiverTableRowBase {
@@ -66,10 +67,19 @@ export function PayerOrReceiverTableRow({ item }: PayerOrReceiverTableRowBase) {
             </TableCell>
             <TableCell>
                 <div className="flex items-center space-x-3">
-                    <Avatar>
-                        <AvatarImage src={item.imgUrl} alt={item.name} />
-                        <AvatarFallback>{generateAvatarFallback(item.name)}</AvatarFallback>
-                    </Avatar>
+
+                    <HoverCard openDelay={100}>
+                        <HoverCardTrigger>
+                            <Avatar>
+                                <AvatarImage src={item.imgUrl} alt={item.name} />
+                                <AvatarFallback className="bg-slate-200 dark:bg-muted">{generateAvatarFallback(item.name)}</AvatarFallback>
+                            </Avatar>
+                        </HoverCardTrigger>
+                        <HoverCardContent>
+                            The React Framework – created and maintained by @vercel.
+                        </HoverCardContent>
+                    </HoverCard>
+
                     <div>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">{item.name}</p>
                         <p className="text-sm font-medium text-muted-foreground">{item.description}</p>

@@ -162,7 +162,11 @@ export function TransactionsForm() {
 
   async function fetchUsers(query?: string) {
     // Simulação de chamada ao backend
-    const response = await gelAllPayerOrReceiver(query)
+    const response = await gelAllPayerOrReceiver({
+      search: "",
+      page: undefined,
+      perPage: undefined
+    })
 
     const res =  response.data.map((user) => ({
       id: user.id,

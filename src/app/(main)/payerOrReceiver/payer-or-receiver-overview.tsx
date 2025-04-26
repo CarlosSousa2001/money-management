@@ -9,10 +9,6 @@ import {
 } from "@/components/ui/table"
 import {
     Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { DataTablePagination } from "@/components/pagination-base";
@@ -24,17 +20,22 @@ import { PayerOrReceiverDialogForm } from "../transactions/new/payer-or-receiver
 
 export function PayerOrReceiverOverview() {
 
-    const [openDialogNewPayerOrReceiver, setOpenDialogNewPayorReceiver] = useState(false)
-    const { data, isLoading, isError } = useGetAllPayerOrReceiver("")
-
     const [currentPage, setCurrentPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
+
+    const [openDialogNewPayerOrReceiver, setOpenDialogNewPayorReceiver] = useState(false)
+    const { data, isLoading, isError } = useGetAllPayerOrReceiver({
+        search: "",
+        page: currentPage,
+        perPage: perPage
+    })
 
 
     const totalItems = data?.meta.totalItems ?? 0;
     const totalPages = data?.meta.totalPages ?? 1;
-    const hasNextPage = data?.meta.nextPage ?? false;
-    const hasPrevPage = data?.meta.prevPage ?? false;
+    const hasNextPage = data?.meta.nextPage === true;
+    const hasPrevPage = data?.meta.prevPage === true;
+    
 
 
     const handlePageChange = (newPage: number) => {
@@ -103,7 +104,7 @@ export function PayerOrReceiverOverview() {
             {openDialogNewPayerOrReceiver && (
                 <Dialog open={openDialogNewPayerOrReceiver} onOpenChange={setOpenDialogNewPayorReceiver}>
                     <DialogTrigger></DialogTrigger>
-                    <PayerOrReceiverDialogForm onClose={setOpenDialogNewPayorReceiver} isTanstack={true}/>
+                    <PayerOrReceiverDialogForm onClose={setOpenDialogNewPayorReceiver} isTanstack={true} />
                 </Dialog>
             )}
         </div>
