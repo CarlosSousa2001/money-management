@@ -5,8 +5,8 @@ export interface PaginatedBase<T> {
         totalPages: number;
         page: number;
         perPage: number;
-        nextPage: number | null;
-        prevPage: number | null;
+        nextPage: boolean | null;
+        prevPage: boolean | null;
     }
 }
 

@@ -43,6 +43,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import {
+  Dialog,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { gelAllPayerOrReceiver } from "../../payerOrReceiver/_api/get-all-payer-or-receiver"
+import { PayerOrReceiverDialogForm } from "./payer-or-receiver-dialog-form"
+import { translateTransactionType } from "@/utils/translations-transaction-type"
+import { translateTransactionStatus } from "@/utils/translations-transactions-status"
+import { translateTransactionCategory } from "@/utils/translations-transaction-category"
 
 // Exemplo de dados para os cartões
 const datacardmocks = [
@@ -92,6 +101,7 @@ const datacardmocks = [
 export function TransactionsForm() {
 
   const [open, setOpen] = useState(false)
+  const [openDialogNewPayerOrReceiver, setOpenDialogNewPayorReceiver] = useState(false)
   const [users, setUsers] = useState<{ id: string; name: string }[]>([])
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -150,21 +160,19 @@ export function TransactionsForm() {
     setShowCard(false);
   }, [selectedPaymentType]);
 
-  async function fetchUsers(query: string) {
+  async function fetchUsers(query?: string) {
     // Simulação de chamada ao backend
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const response = await gelAllPayerOrReceiver(query)
 
-    return [
-      { id: "1", name: "Carlos Sousa" },
-      { id: "2", name: "Maria Silva" },
-      { id: "3", name: "João Oliveira" },
-      { id: "4", name: "Fernanda Costa" },
-    ].filter((user) => user.name.toLowerCase().includes(query.toLowerCase()))
+    const res =  response.data.map((user) => ({
+      id: user.id,
+      name: user.name,
+    }))
+    setUsers(res)
   }
 
-
   useEffect(() => {
-    fetchUsers("").then(setUsers) // Busca inicial sem filtro
+    fetchUsers()
   }, [])
 
 
@@ -246,7 +254,7 @@ export function TransactionsForm() {
                   <SelectContent>
                     {Object.entries(TransactionStatusBase).map(([key, value]) => (
                       <SelectItem key={value} value={value}>
-                        {value}
+                        {translateTransactionStatus(value)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -272,7 +280,7 @@ export function TransactionsForm() {
                   <SelectContent>
                     {Object.entries(TransactionCategory).map(([key, value]) => (
                       <SelectItem key={value} value={value}>
-                        {value}
+                        {translateTransactionCategory(value)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -298,7 +306,7 @@ export function TransactionsForm() {
                   <SelectContent>
                     {Object.entries(TransactionTypeBase).map(([key, value]) => (
                       <SelectItem key={value} value={value}>
-                        {value}
+                        {translateTransactionType(value)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -347,14 +355,14 @@ export function TransactionsForm() {
             onOpenChange={(isOpen) => {
               setOpen(isOpen)
               if (isOpen) {
-                fetchUsers("").then(setUsers) // Recarrega todos os usuários ao abrir
+                fetchUsers("") // Recarrega todos os usuários ao abrir
               }
             }}
           >
             <PopoverTrigger asChild>
               <Button variant="outline" role="combobox" aria-expanded={open} className="col-span-2 justify-between">
                 {selectedUserId
-                  ? users.find((user) => user.id === selectedUserId)?.name
+                  ? selectedUserId.name
                   : "Select user..."}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
@@ -367,22 +375,31 @@ export function TransactionsForm() {
                     type="text"
                     placeholder="Search user..."
                     className="w-full border rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    onChange={(e) => fetchUsers(e.target.value).then(setUsers)}
+                    onChange={(e) => fetchUsers(e.target.value)}
                   />
                 </div>
                 <CommandList>
-                  <CommandEmpty>No user found.</CommandEmpty>
+                  <div className="flex flex-col justify-center gap-2 p-2">
+                    <CommandEmpty>Nenhum usuário encontrado</CommandEmpty>
+                    <Dialog open={openDialogNewPayerOrReceiver} onOpenChange={setOpenDialogNewPayorReceiver}>
+                      <DialogTrigger>Novo pagador/recebedor</DialogTrigger>
+                      <PayerOrReceiverDialogForm onClose={setOpenDialogNewPayorReceiver} setValueContext={setValue} />
+                    </Dialog>
+                  </div>
                   <CommandGroup>
                     {users.map((user) => (
                       <CommandItem
                         key={user.id}
                         value={user.id}
                         onSelect={() => {
-                          setValue("payerOurReceiver", user.id) // Salva o ID no form
+                          setValue("payerOurReceiver", {
+                            id: user.id,
+                            name: user.name,
+                          }) // Salva o ID no form
                           setOpen(false)
                         }}
                       >
-                        <Check className={cn("mr-2 h-4 w-4", selectedUserId === user.id ? "opacity-100" : "opacity-0")} />
+                        <Check className={cn("mr-2 h-4 w-4", selectedUserId?.id === user.id ? "opacity-100" : "opacity-0")} />
                         {user.name}
                       </CommandItem>
                     ))}

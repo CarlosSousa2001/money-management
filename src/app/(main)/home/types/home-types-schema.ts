@@ -48,13 +48,13 @@ export enum PaymentType {
 }
 
 export enum TransactionTypeBase {
-    RECEIVE = "Receive",
-    PAY = "Pay",
+    RECEIVE = "RECEIVE",
+    PAY = "PAY",
 }
 
 export enum TransactionPayerReceiverBase {
-    PERSON = "Person",
-    COMPANY = "Company",
+    PERSON = "PERSON",
+    COMPANY = "COMPANY",
 }
 
 export enum TransactionStatusBase {
