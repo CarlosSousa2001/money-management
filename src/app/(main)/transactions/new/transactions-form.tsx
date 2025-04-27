@@ -52,6 +52,8 @@ import { PayerOrReceiverDialogForm } from "./payer-or-receiver-dialog-form"
 import { translateTransactionType } from "@/utils/translations-transaction-type"
 import { translateTransactionStatus } from "@/utils/translations-transactions-status"
 import { translateTransactionCategory } from "@/utils/translations-transaction-category"
+import { useCreateTransaction } from "../hooks/use-create-trasactions"
+import { TransactionRequest } from "../types/transactions-schema-types"
 
 // Exemplo de dados para os cartões
 const datacardmocks = [
@@ -113,20 +115,20 @@ export function TransactionsForm() {
     mode: "onChange",
   })
 
-  const { setValue, watch } = form
+  const { setValue, watch, formState: { errors }, reset} = form
   const selectedUserId = watch("payerOurReceiver")
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "paymentTypes",
+    name: "payments",
   })
 
-  const selectedPaymentType = form.watch(`paymentTypes.${currentIndex}.paymentType`);
-
+  const selectedPaymentType = form.watch(`payments.${currentIndex}.paymentType`);
+  console.log(errors)
   function handleAppendMethodPaymeent() {
     append({
       cardId: "",
-      paymentType: undefined,
+      paymentType: PaymentType.CASH,
       amount: 0,
       installments: 0,
       isCard: false,
@@ -145,12 +147,36 @@ export function TransactionsForm() {
     }
   };
 
+  const onClose = () => {
+    reset(defaultValuesTransactionsData)
+  }
+
+  const { mutate: handleCreateTransactionsFn } = useCreateTransaction(onClose)
 
   function onSubmit(data: transactionsFormData) {
     console.log(data)
-    console.log("--------------------")
-    console.table(data)
+    const payload: TransactionRequest = {
+      transactionType: data.transactionType,
+      category: data.category,
+      status: data.status,
+      payerReceiverId: data.payerOurReceiver.id,
+      amount: data.amount,
+      currency: data.currency,
+      transactionScheduledDate: data.TransactionScheduledDate,  // Convertendo para ISO string
+      email: data.email,
+      description: data.description,
+      payments: data.payments.map(payment => ({
+        cardId: payment.cardId === "" ? undefined : payment.cardId,
+        paymentType: payment.paymentType,
+        amount: payment.amount,
+        installments: payment.installments,
+      })),
+    };
+
+    // Chame a função para criar a transação passando o payload transformado
+    handleCreateTransactionsFn(payload);
   }
+
 
   useEffect(() => {
     if (selectedPaymentType === PaymentType.CREDIT_CARD || selectedPaymentType === PaymentType.DEBIT_CARD) {
@@ -168,7 +194,7 @@ export function TransactionsForm() {
       perPage: undefined
     })
 
-    const res =  response.data.map((user) => ({
+    const res = response.data.map((user) => ({
       id: user.id,
       name: user.name,
     }))
@@ -271,7 +297,7 @@ export function TransactionsForm() {
 
           <FormField
             control={form.control}
-            name="transactionCategory"
+            name="category"
             render={({ field }) => (
               <FormItem className="col-span-6 lg:col-span-2">
                 <FormLabel>Categoria</FormLabel>
@@ -367,7 +393,7 @@ export function TransactionsForm() {
               <Button variant="outline" role="combobox" aria-expanded={open} className="col-span-2 justify-between">
                 {selectedUserId
                   ? selectedUserId.name
-                  : "Select user..."}
+                  : "Seleccione um pagador ou recebedor"}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -386,7 +412,7 @@ export function TransactionsForm() {
                   <div className="flex flex-col justify-center gap-2 p-2">
                     <CommandEmpty>Nenhum usuário encontrado</CommandEmpty>
                     <Dialog open={openDialogNewPayerOrReceiver} onOpenChange={setOpenDialogNewPayorReceiver}>
-                      <DialogTrigger>Novo pagador/recebedor</DialogTrigger>
+                      <DialogTrigger className="text-sm font-medium text-blue-500 hover:underline cursor-pointer">Novo pagador/recebedor</DialogTrigger>
                       <PayerOrReceiverDialogForm onClose={setOpenDialogNewPayorReceiver} setValueContext={setValue} />
                     </Dialog>
                   </div>
@@ -421,7 +447,7 @@ export function TransactionsForm() {
                 {showCard && (
                   <FormField
                     control={form.control}
-                    name={`paymentTypes.${currentIndex}.cardId`}
+                    name={`payments.${currentIndex}.cardId`}
                     render={({ field }) => (
                       <FormItem className="space-y-1 col-span-4">
                         <FormLabel>Select your card</FormLabel>
@@ -474,7 +500,7 @@ export function TransactionsForm() {
 
                 <FormField
                   control={form.control}
-                  name={`paymentTypes.${currentIndex}.paymentType`}
+                  name={`payments.${currentIndex}.paymentType`}
                   render={({ field }) => (
                     <FormItem className="col-span-4 lg:col-span-1">
                       <FormLabel>Tipo</FormLabel>
@@ -486,7 +512,7 @@ export function TransactionsForm() {
                         </FormControl>
                         <SelectContent>
                           {Object.entries(PaymentType).map(([key, value]) => (
-                            <SelectItem key={value} value={value}>
+                            <SelectItem key={value} value={key}>
                               {value}
                             </SelectItem>
                           ))}
@@ -500,7 +526,7 @@ export function TransactionsForm() {
 
                 <FormField
                   control={form.control}
-                  name={`paymentTypes.${currentIndex}.amount`}
+                  name={`payments.${currentIndex}.amount`}
                   render={({ field }) => (
                     <FormItem className="col-span-4 lg:col-span-1">
                       <FormLabel>Valor</FormLabel>
@@ -517,7 +543,7 @@ export function TransactionsForm() {
 
                 <FormField
                   control={form.control}
-                  name={`paymentTypes.${currentIndex}.installments`}
+                  name={`payments.${currentIndex}.installments`}
                   render={({ field }) => (
                     <FormItem className="col-span-4 lg:col-span-1">
                       <FormLabel>Parcelas</FormLabel>
