@@ -1,7 +1,6 @@
 import { PaginatedBase } from "@/utils/paginated-base";
 
 export enum TransactionCategory {
-    SCHEDULED_DATE = "SCHEDULED_DATE",
     SERVICES = "SERVICES",
     FOOD = "FOOD",
     TRANSPORT = "TRANSPORT",
@@ -40,11 +39,11 @@ export enum CurrencyType {
 export enum PaymentType {
     PIX = "PIX",
     TED = "TED",
-    BOLETO = "Boleto",
-    CREDIT_CARD = "Credit Card",
-    DEBIT_CARD = "Debit Card",
-    BANK_TRANSFER = "Bank Transfer",
-    CASH = "Cash",
+    BOLETO = "BOLETO",
+    CREDIT_CARD = "CREDIT_CARD",
+    DEBIT_CARD = "DEBIT_CARD",
+    BANK_TRANSFER = "BANK_TRANSFER",
+    CASH = "CASH",
 }
 
 export enum TransactionTypeBase {
@@ -58,9 +57,9 @@ export enum TransactionPayerReceiverBase {
 }
 
 export enum TransactionStatusBase {
-    PENDING = "Pending",
-    COMPLETED = "Completed",
-    FAILED = "Cancelled",
+    PENDING = "PENDING",
+    COMPLETED = "COMPLETED",
+    FAILED = "CANCELLED",
 }
 
 

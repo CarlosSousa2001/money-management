@@ -4,7 +4,7 @@ import { format } from "date-fns";
 
 const paymentsTypesSchema = z.object({
     cardId: z.string(),
-    paymentType: z.nativeEnum(PaymentType, { required_error: "Please select a payment type." }).optional(),
+    paymentType: z.nativeEnum(PaymentType, { required_error: "Please select a payment type." }),
     amount: z
         .union([z.coerce.number(), z.null()])
         .transform((value) => (value === null ? 0 : value))
@@ -33,12 +33,12 @@ const paymentsTypesSchema = z.object({
 
 export const transactionsFormSchema = z.object({
     transactionType: z.nativeEnum(TransactionTypeBase, { required_error: "Please select a transaction type." }),
-    transactionCategory: z.nativeEnum(TransactionCategory, { required_error: "Please select a transaction category." }),
+    category: z.nativeEnum(TransactionCategory, { required_error: "Please select a transaction category." }),
     status: z.nativeEnum(TransactionStatusBase, { required_error: "Please select a transaction status." }),
     payerOurReceiver: z.object({
         id: z.string(),
         name: z.string().min(1, "Please select a payer or receiver.")
-    }).optional(),
+    }),
     amount: z.coerce.number({
         required_error: "Please enter an amount.",
         invalid_type_error: "Please enter a valid amount.",
@@ -58,30 +58,27 @@ export const transactionsFormSchema = z.object({
         })
         .email(),
     description: z.string().max(160).min(4),
-    paymentTypes: z.array(paymentsTypesSchema).min(1, "Please select at least one payment type."),
+    payments: z.array(paymentsTypesSchema).min(1, "Please select at least one payment type."),
 })
 
 export type transactionsFormData = z.infer<typeof transactionsFormSchema>
 
 export const defaultValuesTransactionsData: Partial<transactionsFormData> = {
     transactionType: undefined,
-    transactionCategory: undefined,
+    category: undefined,
     status: undefined,
-    payerOurReceiver: {
-        id: "",
-        name: ""
-    },
+    payerOurReceiver: undefined,
     amount: 0,
     currency: CurrencyType.BRL,
     TransactionScheduledDate: "",
     email: "",
     description: "",
-    paymentTypes: [
+    payments: [
         {
             cardId: "",
-            paymentType: undefined,
+            paymentType: PaymentType.CASH,
             amount: 0,
-            installments: 1,
+            installments: 0,
             isCard: false
         }
     ]
