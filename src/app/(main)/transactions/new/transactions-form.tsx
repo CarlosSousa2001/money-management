@@ -659,7 +659,7 @@ export function TransactionsForm() {
                 <FormControl>
                   <Textarea
                     placeholder="Tell us a little bit about yourself"
-                    className="resize-none"
+                    className="resize-none bg-white"
                     {...field}
                   />
                 </FormControl>

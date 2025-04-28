@@ -120,17 +120,14 @@ export function UsersProfileForm() {
     handleUpdateUser(data)
   }
 
-
   async function uploadToMinio(file: File, presignedUrl: string) {
     try {
-      const formData = new FormData();
-      formData.append("file", file); // nome do campo não importa com presigned PUT
-
+      // Enviar o arquivo diretamente no corpo da requisição
       const response = await fetch(presignedUrl, {
         method: "PUT",
-        body: file, // <- diretamente o arquivo, não FormData
+        body: file,  // Envio diretamente o arquivo binário
         headers: {
-          'Content-Type': file.type, // ex: image/jpeg
+          'Content-Type': file.type,  // Tipo de conteúdo do arquivo, ex: image/jpeg
         }
       });
 
@@ -140,9 +137,10 @@ export function UsersProfileForm() {
 
       console.log("Upload feito com sucesso!");
     } catch (error) {
-      console.error(error);
+      console.error("Erro durante o upload:", error);
     }
   }
+
 
   useEffect(() => {
     if (user) {
@@ -157,7 +155,7 @@ export function UsersProfileForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
 
         <div className="flex items-center gap-4">
-          <div className="w-22 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+          <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center overflow-hidden">
             {imageProfile ? (
               <Image src={imageProfile} width={100} height={100} alt="profile-image-user" />
             ) : (
