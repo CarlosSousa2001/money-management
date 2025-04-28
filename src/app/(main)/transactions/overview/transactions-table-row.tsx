@@ -1,0 +1,102 @@
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Ellipsis } from "lucide-react";
+import Link from "next/link";
+
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from "@/components/ui/hover-card"
+import { translateTransactionStatus } from "@/utils/translations-transactions-status";
+import { TransactionResponse, TransactionResponseUnit } from "../types/transactions-schema-types";
+
+interface TransactionProps {
+    transaction: TransactionResponseUnit
+}
+
+export function TransactionsTableRow({transaction}: TransactionProps) {
+    return (
+        <TableRow key={transaction.id} className="h-[64px]">
+            <TableCell className="">
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Ellipsis className="size-5" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                        <DropdownMenuItem>Excluir</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={{ pathname: "/transactions/form", query: { id: transaction.id } }} className="w-full text-left">
+                                Editar
+                            </Link>
+
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
+            </TableCell>
+            <TableCell>{transaction.description}</TableCell>
+            <TableCell>{transaction.email}</TableCell>
+            <TableCell>{transaction.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</TableCell>
+            <TableCell>{transaction.currency}</TableCell>
+            <TableCell>{translateTransactionStatus(transaction.status)}</TableCell>
+
+            {/* HoverCard para PayerReceiver */}
+            <TableCell>
+                <HoverCard>
+                    <HoverCardTrigger className="cursor-pointer text-blue-500 underline">
+                        {transaction.payerReceiver.name}
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-64">
+                        <div className="flex items-center gap-2">
+                            <img
+                                src={transaction.payerReceiver.imgUrl}
+                                alt={transaction.payerReceiver.name}
+                                className="w-10 h-10 rounded-full"
+                            />
+                            <div>
+                                <p className="font-bold">{transaction.payerReceiver.name}</p>
+                                <p className="text-sm text-gray-500">{transaction.payerReceiver.userType}</p>
+                                <p className="text-xs">{transaction.payerReceiver.description}</p>
+                            </div>
+                        </div>
+                    </HoverCardContent>
+                </HoverCard>
+            </TableCell>
+
+            {/* HoverCard para Payments */}
+            <TableCell>
+                <HoverCard>
+                    <HoverCardTrigger className="cursor-pointer text-blue-500 underline">
+                        {transaction.payments.length} payment(s)
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-72">
+                        {transaction.payments.map((payment) => (
+                            <div key={payment.id} className="border-b last:border-0 pb-2 mb-2">
+                                <p><strong>Type:</strong> {payment.paymentType}</p>
+                                <p><strong>Amount:</strong> ${payment.amount.toFixed(2)}</p>
+                                {payment.installments && (
+                                    <p><strong>Installments:</strong> {payment.installments}x of ${payment.valuePerInstallment?.toFixed(2)}</p>
+                                )}
+                            </div>
+                        ))}
+                    </HoverCardContent>
+                </HoverCard>
+            </TableCell>
+        </TableRow>
+    )
+}

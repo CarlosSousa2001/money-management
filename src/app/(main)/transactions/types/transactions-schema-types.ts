@@ -30,6 +30,7 @@ export interface Payment {
 export type PaymentRequest = Omit<Payment, "id" | "valuePerInstallment">;
 
 export interface PayerReceiver {
+    id: string;
     name: string;
     description: string;
     imgUrl: string;
@@ -70,3 +71,7 @@ interface TransactionBaseResponse {
 }
 
 export type TransactionResponse = ResponseDataBaseSimple<TransactionBaseResponse>
+export type TransactionResponseUnit = TransactionBaseResponse
+
+
+export type TransactionResponsePaginated = PaginatedBase<TransactionBaseResponse>

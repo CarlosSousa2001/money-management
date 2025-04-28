@@ -26,7 +26,7 @@ export function SideBar() {
 
   const data_sidebar: SideBarBase[] = [
     { path: "/home", name: "Dashboard", icon: <Home size={20} />, module: "Home" },
-    { path: "/transactions/new", name: "Transactions", icon: <CreditCard size={20} />, module: "Utilities" },
+    { path: "/transactions/overview", name: "Transactions", icon: <CreditCard size={20} />, module: "Utilities" },
     { path: "/plan", name: "Plan", icon: <Clipboard size={20} />, module: "Utilities" },
     { path: "/credit-card/new", name: "Credit card", icon: <WalletCards size={20} />, module: "Utilities" },
     { path: "/budget", name: "Budget", icon: <DollarSign size={20} />, module: "Utilities" },
