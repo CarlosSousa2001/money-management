@@ -4,6 +4,7 @@ import { StatusDefaultActiveInactive } from "@/utils/status-default-active-inact
 export enum cardTypeEnumBase {
     CREDIT = "CREDIT",
     DEBIT = "DEBIT",
+    CREDIT_AND_DEBIT = "CREDIT_AND_DEBIT",
 }
 
 interface CardFormBase {

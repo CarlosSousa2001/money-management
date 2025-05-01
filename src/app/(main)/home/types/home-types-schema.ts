@@ -39,10 +39,9 @@ export enum CurrencyType {
 export enum PaymentType {
     PIX = "PIX",
     TED = "TED",
-    BOLETO = "BOLETO",
+    BANK_SLIP = "BANK_SLIP",
     CREDIT_CARD = "CREDIT_CARD",
     DEBIT_CARD = "DEBIT_CARD",
-    BANK_TRANSFER = "BANK_TRANSFER",
     CASH = "CASH",
 }
 

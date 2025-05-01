@@ -16,7 +16,7 @@ import { PayerOrReceiverTableRow } from "./payer-or-receiver-table-row";
 import { useState } from "react";
 import { useGetAllPayerOrReceiver } from "./hooks/use-get-all-payer-or-receiver";
 import { CirclePlus } from "lucide-react";
-import { PayerOrReceiverDialogForm } from "../transactions/new/payer-or-receiver-dialog-form";
+import { PayerOrReceiverDialogForm } from "../transactions/form/payer-or-receiver-dialog-form";
 
 export function PayerOrReceiverOverview() {
 

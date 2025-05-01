@@ -30,6 +30,7 @@ export interface Payment {
 export type PaymentRequest = Omit<Payment, "id" | "valuePerInstallment">;
 
 export interface PayerReceiver {
+    id: string;
     name: string;
     description: string;
     imgUrl: string;
@@ -54,8 +55,11 @@ export interface TransactionRequest extends Omit<TransactionBase, "id" | "paymen
     payments: PaymentRequest[];
 }
 
+export type TransactioUpdateRequest = TransactionBase
+
 interface TransactionBaseResponse {
     id: string;
+    code: string;
     description: string;
     email: string;
     currency: CurrencyType;
@@ -64,9 +68,12 @@ interface TransactionBaseResponse {
     category: TransactionCategory;
     transactionType: TransactionTypeBase;
     status: TransactionStatusBase;
-    payerReceiverId: string;
     payerReceiver: PayerReceiver;
     payments: Payment[];
 }
 
 export type TransactionResponse = ResponseDataBaseSimple<TransactionBaseResponse>
+export type TransactionResponseUnit = TransactionBaseResponse
+
+
+export type TransactionResponsePaginated = PaginatedBase<TransactionBaseResponse>

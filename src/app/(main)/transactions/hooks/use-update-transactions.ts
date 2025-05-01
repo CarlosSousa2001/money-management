@@ -1,15 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createTransaction } from "../_api/create-transaction";
 import { toast } from "sonner";
-import { TransactionRequest } from "../types/transactions-schema-types";
-import { transactionsFormData } from "../form/zod/transactions-schema";
+import {transactionsUpdateFormData } from "../form/zod/transactions-schema";
+import { TransactioUpdateRequest } from "../types/transactions-schema-types";
+import { updateTransaction } from "../_api/update-transaction";
 
-export function useCreateTransaction(onSuccessCallback?: () => void) {
+export function useUpdateTransaction(onSuccessCallback?: () => void) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (data: transactionsFormData) => {
-            const payload: TransactionRequest = {
+        mutationFn: (data: transactionsUpdateFormData) => {
+            const payload: TransactioUpdateRequest = {
+                id: data.id,
                 transactionType: data.transactionType,
                 category: data.category,
                 status: data.status,
@@ -20,20 +21,21 @@ export function useCreateTransaction(onSuccessCallback?: () => void) {
                 email: data.email,
                 description: data.description,
                 payments: data.payments.map(payment => ({
+                    id: payment.id,
                     cardId: payment.cardId === "" ? undefined : payment.cardId,
                     paymentType: payment.paymentType,
                     amount: payment.amount,
                     installments: payment.installments,
                 })),
             };
-            return createTransaction(payload);
+            return updateTransaction(payload);
         },
         onSuccess: () => {
-            toast.success("Transação criada com sucesso!");
+            toast.success("Transação atualizada com sucesso!");
             onSuccessCallback?.();
         },
         onError: (error) => {
-            toast.error("Erro ao criar transação");
+            toast.error("Erro ao editar transação");
             console.error(error);
         }
     });
