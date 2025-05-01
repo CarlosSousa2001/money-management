@@ -3,7 +3,7 @@ import { z } from "zod"
 import { format } from "date-fns";
 
 const paymentsTypesSchema = z.object({
-    cardId: z.string(),
+    cardId: z.string().optional(),
     paymentType: z.nativeEnum(PaymentType, { required_error: "Please select a payment type." }),
     amount: z
         .union([z.coerce.number(), z.null()])
@@ -64,9 +64,9 @@ export const transactionsFormSchema = z.object({
 export type transactionsFormData = z.infer<typeof transactionsFormSchema>
 
 export const defaultValuesTransactionsData: Partial<transactionsFormData> = {
-    transactionType: undefined,
-    category: undefined,
-    status: undefined,
+    transactionType: TransactionTypeBase.RECEIVE,
+    category: TransactionCategory.OTHER,
+    status: TransactionStatusBase.PENDING,
     payerOurReceiver: undefined,
     amount: 0,
     currency: CurrencyType.BRL,
@@ -89,7 +89,7 @@ export const defaultValuesTransactionsData: Partial<transactionsFormData> = {
 
 const paymentsUpdateTypesSchema = z.object({
     id: z.string(),
-    cardId: z.string(),
+    cardId: z.string().optional(),
     paymentType: z.nativeEnum(PaymentType, { required_error: "Please select a payment type." }),
     amount: z
         .union([z.coerce.number(), z.null()])

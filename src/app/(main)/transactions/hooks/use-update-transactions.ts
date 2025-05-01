@@ -31,11 +31,11 @@ export function useUpdateTransaction(onSuccessCallback?: () => void) {
             return updateTransaction(payload);
         },
         onSuccess: () => {
-            toast.success("Transação criada com sucesso!");
+            toast.success("Transação atualizada com sucesso!");
             onSuccessCallback?.();
         },
         onError: (error) => {
-            toast.error("Erro ao criar transação");
+            toast.error("Erro ao editar transação");
             console.error(error);
         }
     });

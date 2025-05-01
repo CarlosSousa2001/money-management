@@ -59,6 +59,7 @@ export type TransactioUpdateRequest = TransactionBase
 
 interface TransactionBaseResponse {
     id: string;
+    code: string;
     description: string;
     email: string;
     currency: CurrencyType;
@@ -67,7 +68,6 @@ interface TransactionBaseResponse {
     category: TransactionCategory;
     transactionType: TransactionTypeBase;
     status: TransactionStatusBase;
-    payerReceiverId: string;
     payerReceiver: PayerReceiver;
     payments: Payment[];
 }

@@ -1,10 +1,9 @@
 import { UseFormReset } from "react-hook-form";
-import { transactionsFormData } from "../../transactions/form/zod/transactions-schema";
 import { TransactionResponse } from "../../transactions/types/transactions-schema-types";
-import { TransactionCategory } from "../../home/types/home-types-schema";
+import { transactionsFormData, transactionsUpdateFormData } from "../../transactions/form/zod/transactions-schema";
 
 export function useTransactionFormActions(
-    reset: UseFormReset<transactionsFormData>
+    reset: UseFormReset<transactionsFormData | transactionsUpdateFormData>
 ) {
     function resetTransactionForm(transactionData?: TransactionResponse) {
         if (!transactionData) return;
@@ -12,6 +11,7 @@ export function useTransactionFormActions(
         const { data } = transactionData;
 
         reset({
+            id: data.id,
             description: data.description,
             email: data.email,
             currency: data.currency,
@@ -25,6 +25,7 @@ export function useTransactionFormActions(
                 name: data.payerReceiver.name,
             },
             payments: data.payments.map((payment) => ({
+                id: payment.id,
                 amount: payment.amount,
                 installments: payment.installments,
                 paymentType: payment.paymentType,

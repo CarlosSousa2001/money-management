@@ -15,7 +15,7 @@ export async function updateTransaction({
     payments
 }: TransactioUpdateRequest) {
     const response = await http
-        .post(`transactions/${id}`, {
+        .put(`transactions/${id}`, {
             json: {
                 description,
                 email,

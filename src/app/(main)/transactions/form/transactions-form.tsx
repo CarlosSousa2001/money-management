@@ -54,7 +54,7 @@ import { translateTransactionStatus } from "@/utils/translations-transactions-st
 import { translateTransactionCategory } from "@/utils/translations-transaction-category"
 import { useCreateTransaction } from "../hooks/use-create-trasactions"
 import { TransactionRequest } from "../types/transactions-schema-types"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useTransactionFormActions } from "../../user/hooks/use-transaction-form-action"
 import { useGetTransactionById } from "../hooks/use-get-transactions-by-id"
 import { useUpdateTransaction } from "../hooks/use-update-transactions"
@@ -106,6 +106,7 @@ const datacardmocks = [
 
 export function TransactionsForm() {
 
+  const router = useRouter()
   const params = useSearchParams()
   const trasanctionParamsId = params.get("id")
 
@@ -122,7 +123,7 @@ export function TransactionsForm() {
     mode: "onChange",
   })
 
-  const { setValue, watch, formState: { errors }, reset } = form
+  const { setValue, watch, formState: { errors }, reset, clearErrors } = form
   const selectedUserId = watch("payerOurReceiver")
 
   const { fields, append, remove } = useFieldArray({
@@ -156,6 +157,8 @@ export function TransactionsForm() {
 
   const onClose = () => {
     reset(defaultValuesTransactionsData)
+    clearErrors()
+    router.replace("/transactions/form")
   }
 
   const { mutate: handleCreateTransactionsFn } = useCreateTransaction(onClose)
@@ -163,8 +166,13 @@ export function TransactionsForm() {
   const { data: transactionData, isLoading: isLoadingTransaction } = useGetTransactionById(trasanctionParamsId!);
   const { resetTransactionForm } = useTransactionFormActions(reset)
 
-  function onSubmit(data: transactionsFormData) {
+  function onSubmit(data: transactionsFormData | transactionsUpdateFormData) {
     console.log(data)
+
+    if (trasanctionParamsId) {
+      handleUpdateTransactionsFn(data as transactionsUpdateFormData)
+      return
+    }
 
     handleCreateTransactionsFn(data);
   }
