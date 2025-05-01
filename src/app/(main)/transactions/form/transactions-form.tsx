@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { defaultValuesTransactionsData, transactionsFormData, transactionsFormSchema } from "./zod/transactions-schema"
+import { defaultValuesTransactionsData, transactionsFormData, transactionsFormSchema, transactionsUpdateFormData, transactionsUpdateFormSchema } from "./zod/transactions-schema"
 import { CreditCardItem } from "@/components/credit-card"
 import { CurrencyType, PaymentType, TransactionCategory, TransactionStatusBase, TransactionTypeBase } from "../../home/types/home-types-schema"
 import { useEffect, useState } from "react"
@@ -57,6 +57,7 @@ import { TransactionRequest } from "../types/transactions-schema-types"
 import { useSearchParams } from "next/navigation"
 import { useTransactionFormActions } from "../../user/hooks/use-transaction-form-action"
 import { useGetTransactionById } from "../hooks/use-get-transactions-by-id"
+import { useUpdateTransaction } from "../hooks/use-update-transactions"
 
 // Exemplo de dados para os cartões
 const datacardmocks = [
@@ -115,8 +116,8 @@ export function TransactionsForm() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCard, setShowCard] = useState(false);
 
-  const form = useForm<transactionsFormData>({
-    resolver: zodResolver(transactionsFormSchema),
+  const form = useForm<transactionsFormData | transactionsUpdateFormData>({
+    resolver: zodResolver(trasanctionParamsId ? transactionsUpdateFormSchema : transactionsFormSchema),
     defaultValues: defaultValuesTransactionsData,
     mode: "onChange",
   })
@@ -158,6 +159,7 @@ export function TransactionsForm() {
   }
 
   const { mutate: handleCreateTransactionsFn } = useCreateTransaction(onClose)
+  const { mutate: handleUpdateTransactionsFn } = useUpdateTransaction(onClose)
   const { data: transactionData, isLoading: isLoadingTransaction } = useGetTransactionById(trasanctionParamsId!);
   const { resetTransactionForm } = useTransactionFormActions(reset)
 
@@ -668,7 +670,7 @@ export function TransactionsForm() {
             )}
           />
         </div>
-        <Button type="submit">Save</Button>
+        <Button type="submit">Salvar</Button>
       </form>
     </Form>
   )

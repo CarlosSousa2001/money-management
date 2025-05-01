@@ -55,6 +55,8 @@ export interface TransactionRequest extends Omit<TransactionBase, "id" | "paymen
     payments: PaymentRequest[];
 }
 
+export type TransactioUpdateRequest = TransactionBase
+
 interface TransactionBaseResponse {
     id: string;
     description: string;
