@@ -8,11 +8,7 @@ import { Ellipsis } from "lucide-react";
 import Link from "next/link";
 
 import {
-    Table,
-    TableBody,
     TableCell,
-    TableHead,
-    TableHeader,
     TableRow,
 } from "@/components/ui/table"
 
@@ -22,13 +18,15 @@ import {
     HoverCardTrigger,
 } from "@/components/ui/hover-card"
 import { translateTransactionStatus } from "@/utils/translations-transactions-status";
-import { TransactionResponse, TransactionResponseUnit } from "../types/transactions-schema-types";
+import { TransactionResponseUnit } from "../types/transactions-schema-types";
+import { renderCurrencyTag } from "@/utils/currency-color-map";
+import { renderTransactionStatusTag } from "@/utils/status-color-map";
 
 interface TransactionProps {
     transaction: TransactionResponseUnit
 }
 
-export function TransactionsTableRow({transaction}: TransactionProps) {
+export function TransactionsTableRow({ transaction }: TransactionProps) {
     return (
         <TableRow key={transaction.id} className="h-[64px]">
             <TableCell className="">
@@ -43,7 +41,6 @@ export function TransactionsTableRow({transaction}: TransactionProps) {
                             <Link href={{ pathname: "/transactions/form", query: { id: transaction.id } }} className="w-full text-left">
                                 Editar
                             </Link>
-
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -52,8 +49,8 @@ export function TransactionsTableRow({transaction}: TransactionProps) {
             <TableCell>{transaction.description}</TableCell>
             <TableCell>{transaction.email}</TableCell>
             <TableCell>{transaction.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</TableCell>
-            <TableCell>{transaction.currency}</TableCell>
-            <TableCell>{translateTransactionStatus(transaction.status)}</TableCell>
+            <TableCell>{renderCurrencyTag(transaction.currency)}</TableCell>
+            <TableCell>{renderTransactionStatusTag(translateTransactionStatus(transaction.status))}</TableCell>
 
             {/* HoverCard para PayerReceiver */}
             <TableCell>
