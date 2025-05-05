@@ -54,7 +54,7 @@ import { translateTransactionStatus } from "@/utils/translations-transactions-st
 import { translateTransactionCategory } from "@/utils/translations-transaction-category"
 import { useCreateTransaction } from "../hooks/use-create-trasactions"
 import { TransactionRequest } from "../types/transactions-schema-types"
-import { useRouter, useSearchParams } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useTransactionFormActions } from "../../user/hooks/use-transaction-form-action"
 import { useGetTransactionById } from "../hooks/use-get-transactions-by-id"
 import { useUpdateTransaction } from "../hooks/use-update-transactions"
@@ -106,9 +106,16 @@ const datacardmocks = [
 
 export function TransactionsForm() {
 
+  const [trasanctionParamsId, setTransactionParamsId] = useState<string | null>(null);
+
   const router = useRouter()
   const params = useSearchParams()
-  const trasanctionParamsId = params.get("id")
+  const pathname = usePathname()
+
+  useEffect(() => {
+    const id = params.get("id")
+    setTransactionParamsId(id)
+  }, [pathname, params])
 
   const [open, setOpen] = useState(false)
   const [openDialogNewPayerOrReceiver, setOpenDialogNewPayorReceiver] = useState(false)
@@ -132,7 +139,7 @@ export function TransactionsForm() {
   })
 
   const selectedPaymentType = form.watch(`payments.${currentIndex}.paymentType`);
-  console.log(errors)
+
   function handleAppendMethodPaymeent() {
     append({
       cardId: "",
@@ -163,7 +170,9 @@ export function TransactionsForm() {
 
   const { mutate: handleCreateTransactionsFn } = useCreateTransaction(onClose)
   const { mutate: handleUpdateTransactionsFn } = useUpdateTransaction(onClose)
-  const { data: transactionData, isLoading: isLoadingTransaction } = useGetTransactionById(trasanctionParamsId!);
+  const transactionQuery = useGetTransactionById(trasanctionParamsId || "");
+  const transactionData = transactionQuery.data;
+  const isLoadingTransaction = transactionQuery.isLoading;
   const { resetTransactionForm } = useTransactionFormActions(reset)
 
   function onSubmit(data: transactionsFormData | transactionsUpdateFormData) {
@@ -179,6 +188,7 @@ export function TransactionsForm() {
 
   useEffect(() => {
     // Verifique se transactionData existe antes de chamar resetTransactionForm
+    console.log(transactionData)
     if (transactionData) {
       resetTransactionForm(transactionData);
     }
