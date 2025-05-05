@@ -1,13 +1,11 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
 import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
@@ -17,14 +15,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-    { month: "January", pay: 186, receive: 80 },
-    { month: "February", pay: 305, receive: 200 },
-    { month: "March", pay: 237, receive: 120 },
-    { month: "April", pay: 73, receive: 190 },
-    { month: "May", pay: 209, receive: 130 },
-    { month: "June", pay: 214, receive: 140 },
-]
+
 import {
     Select,
     SelectContent,
@@ -32,33 +23,72 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { useEffect, useState } from "react"
+import { getMetricsMonths } from "./_api/get-metrics-months"
+import { translateTransactionStatus } from "@/utils/translations-transactions-status"
+import { TransactionStatusBase } from "./types/home-types-schema"
 
 const chartConfig = {
     pay: {
-      label: "Pay",
-      color: "oklch(0.768 0.233 130.85)",
+        label: "Pay",
+        color: "oklch(0.768 0.233 130.85)",
     },
     receive: {
-      label: "Receive",
-      color: "oklch(0.704 0.191 22.216)",
+        label: "Receive",
+        color: "oklch(0.704 0.191 22.216)",
     },
-  } satisfies ChartConfig
+} satisfies ChartConfig
 export function HomeCharts() {
+    const [chartData, setChartData] = useState<any[]>([])
+    const [status, setStatus] = useState<TransactionStatusBase>(TransactionStatusBase.COMPLETED)
+    const [year, setYear] = useState<number>(new Date().getFullYear())
+    const years = Array.from({ length: 6 }, (_, i) => 2020 + i)
+
+    async function getMetrics() {
+        const response = await getMetricsMonths(year, status)
+
+        setChartData(response.data)
+    }
+
+    useEffect(() => {
+        getMetrics()
+    }, [status, year])
+
+
     return (
         <Card>
             <CardHeader>
                 <div className="w-full flex items-center justify-between">
                     <CardTitle>Controle</CardTitle>
-                    <Select>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Options" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="light">Day</SelectItem>
-                            <SelectItem value="dark">Moth</SelectItem>
-                            <SelectItem value="system">Year</SelectItem>
-                        </SelectContent>
-                    </Select>
+
+                    <div className="flex gap-2 items-center justify-end">
+                        <Select onValueChange={(value) => setStatus(value as TransactionStatusBase)} value={status}>
+                            <SelectTrigger className="max-w-[160px]">
+                                <SelectValue placeholder="Selecione..." />
+                            </SelectTrigger>
+                            <SelectContent >
+                                {Object.entries(TransactionStatusBase).map(([key, value]) => (
+                                    <SelectItem key={value} value={value}>
+                                        {translateTransactionStatus(value)}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        <Select onValueChange={(value) => setYear(Number(value))} value={String(year)}>
+                            <SelectTrigger className="max-w-[160px]">
+                                <SelectValue placeholder="Selecione o ano..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {years.map((y) => (
+                                    <SelectItem key={y} value={String(y)}>
+                                        {y}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                    </div>
 
                 </div>
                 <CardDescription>
@@ -88,7 +118,7 @@ export function HomeCharts() {
                             content={<ChartTooltipContent indicator="dot" />}
                         />
                         <Area
-                            dataKey="receive"
+                            dataKey="received"
                             type="natural"
                             fill="var(--color-receive)"
                             fillOpacity={0.4}
@@ -96,7 +126,7 @@ export function HomeCharts() {
                             stackId="a"
                         />
                         <Area
-                            dataKey="pay"
+                            dataKey="paid"
                             type="natural"
                             fill="var(--color-pay)"
                             fillOpacity={0.4}
