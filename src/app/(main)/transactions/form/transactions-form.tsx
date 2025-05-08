@@ -58,54 +58,15 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useTransactionFormActions } from "../../user/hooks/use-transaction-form-action"
 import { useGetTransactionById } from "../hooks/use-get-transactions-by-id"
 import { useUpdateTransaction } from "../hooks/use-update-transactions"
+import { useGetAllCards } from "../../credit-card/new/hooks/use-get-all-cards"
+import { translatePaymentType } from "@/utils/translations-payment-type"
+import { toast } from "sonner"
 
-// Exemplo de dados para os cartões
-const datacardmocks = [
-  {
-    id: "12",
-    cardHolder: "Carlos Sousa",
-    cardNumber: "1234 5678 9012 3456",
-    cardIssuer: "C6 Bank",
-    cardType: "Carbon",
-    cardValidity: "07/22",
-    cardExpire: "07/27",
-    cardFlag: "Visa", // Caminho para o logo da bandeira
-  },
-  {
-    id: "123",
-    cardHolder: "Maria Silva",
-    cardNumber: "9876 5432 1098 7654",
-    cardIssuer: "Nubank",
-    cardType: "Platinum",
-    cardValidity: "08/21",
-    cardExpire: "08/25",
-    cardFlag: "American Express",
-  },
-  {
-    id: "1234",
-    cardHolder: "João Oliveira",
-    cardNumber: "1122 3344 5566 7788",
-    cardIssuer: "Itaú",
-    cardType: "Gold",
-    cardValidity: "01/23",
-    cardExpire: "01/27",
-    cardFlag: "MasterCard",
-  },
-  {
-    id: "12345",
-    cardHolder: "Fernanda Costa",
-    cardNumber: "5566 7788 9900 1122",
-    cardIssuer: "Bradesco",
-    cardType: "Black",
-    cardValidity: "09/22",
-    cardExpire: "09/26",
-    cardFlag: "Visa",
-  },
-];
 
 
 export function TransactionsForm() {
 
+  const { data } = useGetAllCards()
   const [trasanctionParamsId, setTransactionParamsId] = useState<string | null>(null);
 
   const router = useRouter()
@@ -131,6 +92,7 @@ export function TransactionsForm() {
   })
 
   const { setValue, watch, formState: { errors }, reset, clearErrors } = form
+
   const selectedUserId = watch("payerOurReceiver")
 
   const { fields, append, remove } = useFieldArray({
@@ -196,7 +158,7 @@ export function TransactionsForm() {
   }, [transactionData]);
 
   useEffect(() => {
-    if (selectedPaymentType === PaymentType.CREDIT_CARD || selectedPaymentType === PaymentType.DEBIT_CARD) {
+    if (selectedPaymentType === PaymentType.CREDIT || selectedPaymentType === PaymentType.DEBIT) {
       setShowCard(true);
       return
     }
@@ -222,6 +184,13 @@ export function TransactionsForm() {
     fetchUsers()
   }, [])
 
+  useEffect(() => {
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      toast.error("O formulário contém erros. Verifique os campos destacados.");
+    }
+  }, [errors]);
+  
 
   return (
     <Form {...form}>
@@ -407,10 +376,10 @@ export function TransactionsForm() {
             }}
           >
             <PopoverTrigger asChild>
-              <Button variant="outline" role="combobox" aria-expanded={open} className="col-span-2 justify-between">
+              <Button variant="outline" role="combobox" aria-expanded={open} className={`col-span-6 lg:col-span-2 justify-between ${errors.payerOurReceiver && "text-red-500"} `}>
                 {selectedUserId
                   ? selectedUserId.name
-                  : "Seleccione um pagador ou recebedor"}
+                  : "Pagador | Recebedor"}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -477,7 +446,7 @@ export function TransactionsForm() {
                           value={field.value}
                           className="flex items-center gap-4 overflow-auto"
                         >
-                          {datacardmocks.map((card) => (
+                          {data?.data.map((card) => (
                             <FormItem key={card.id}>
                               <FormLabel
                                 htmlFor={`card-${card.id}`}
@@ -493,17 +462,17 @@ export function TransactionsForm() {
                                 {/* Aqui, verificamos se o cartão está selecionado */}
                                 <div
                                   className={cn(
-                                    "rounded-md",
-                                    field.value === card.id && "border-2 border-orange-500 rounded-2xl",
+                                    "rounded-md w-[300px]",
+                                    field.value === card.id && "border-2 border-orange-500 rounded-2xl w-[300px]",
                                   )}
                                 >
                                   <CreditCardItem
-                                    cardHolder={card.cardHolder}
-                                    cardNumber={card.cardNumber}
-                                    cardIssuer={card.cardIssuer}
+                                    cardHolder={card.name}
+                                    cardNumber={card.number}
+                                    cardIssuer={card.company}
                                     cardType={card.cardType}
-                                    cardValidity={card.cardValidity}
-                                    cardFlag={card.cardFlag}
+                                    cardValidity={card.expiredDate}
+                                    cardFlag={card.flag}
                                   />
                                 </div>
                               </FormLabel>
@@ -530,7 +499,7 @@ export function TransactionsForm() {
                         <SelectContent>
                           {Object.entries(PaymentType).map(([key, value]) => (
                             <SelectItem key={value} value={key}>
-                              {value}
+                              {translatePaymentType(value)}
                             </SelectItem>
                           ))}
                         </SelectContent>

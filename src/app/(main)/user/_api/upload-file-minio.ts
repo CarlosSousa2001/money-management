@@ -1,16 +1,11 @@
-import { http } from "@/lib/http";
-import { FileUploadMinioREquest, FileUploadMinioResponse } from "../types/user-schemas-types";
+export async function uploadEasyupload(file: File) {
+  const formData = new FormData();
+  formData.append("file", file);
 
+  const response = await fetch("http://localhost:9002/files/upload", {
+    method: "POST",
+    body: formData,
+  });
 
-export async function uploadFileMinio({ fileName, contentType }: FileUploadMinioREquest) {
-    const response = await http
-        .post("files/upload", {
-            json: {
-                fileName,
-                contentType,
-            },
-        })
-        .json<FileUploadMinioResponse>();
-
-    return response;
+  return await response.json();
 }

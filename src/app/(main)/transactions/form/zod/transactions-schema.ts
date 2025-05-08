@@ -20,7 +20,7 @@ const paymentsTypesSchema = z.object({
 })
     .transform((data) => ({
         ...data,
-        isCard: !!data.paymentType && [PaymentType.CREDIT_CARD, PaymentType.DEBIT_CARD].includes(data.paymentType),
+        isCard: !!data.paymentType && [PaymentType.CREDIT, PaymentType.DEBIT].includes(data.paymentType),
     }))
     .refine((data) => {
         if (!data.paymentType) return false; // Se for null ou undefined, retorna erro
@@ -106,7 +106,7 @@ const paymentsUpdateTypesSchema = z.object({
 })
     .transform((data) => ({
         ...data,
-        isCard: !!data.paymentType && [PaymentType.CREDIT_CARD, PaymentType.DEBIT_CARD].includes(data.paymentType),
+        isCard: !!data.paymentType && [PaymentType.CREDIT, PaymentType.DEBIT].includes(data.paymentType),
     }))
     .refine((data) => {
         if (!data.paymentType) return false; // Se for null ou undefined, retorna erro

@@ -1,46 +1,39 @@
 import {
-    Table,
-    TableBody,
-    TableCaption,
     TableCell,
-    TableHead,
-    TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { TransactionResponse } from "./types/home-types-schema"
-import Image from "next/image"
-import { getTransactionStatusTag } from "@/utils/transaction-status-tags";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { generateAvatarFallback } from "@/utils/avatar-fallback-generate";
+import { translatePayerOrReceiver } from "@/utils/translations-payer-or-receiver";
+import { renderTransactionStatusTag } from "@/utils/status-color-map";
+import { translateTransactionStatus } from "@/utils/translations-transactions-status";
+import { translateTransactionType } from "@/utils/translations-transaction-type";
+import { TransactionResponseUnit } from "../transactions/types/transactions-schema-types";
 
 interface HomeTableRowBase {
-    item: TransactionResponse
+    item: TransactionResponseUnit
 }
 
 export function HomeTableRow({ item }: HomeTableRowBase) {
-    const statusClasses = getTransactionStatusTag(item.status);
     return (
-        <TableRow className="h-[90px]">
+        <TableRow className="h-[64px]">
             <TableCell>
                 <div className="flex items-center space-x-3">
-                    <Image
-                        width={62}
-                        height={62}
-                        src={item.payerReceiver.iconUrl}
-                        alt="Icon company"
-                        className="w-[62px] h-[62px] rounded-lg"
-                    />
+                    <Avatar>
+                        <AvatarImage src={item.payerReceiver.imgUrl} alt={item.payerReceiver.imgUrl} />
+                        <AvatarFallback className="bg-slate-200 dark:bg-muted">{generateAvatarFallback(item.payerReceiver.name)}</AvatarFallback>
+                    </Avatar>
                     <div>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">{item.payerReceiver.name}</p>
-                        <p className="text-sm font-normal text-gray-500 dark:text-gray-400">{item.payerReceiver.type}</p>
+                        <p className="text-xs font-light dark:text-white">{translatePayerOrReceiver(item.payerReceiver.userType)}</p>
                     </div>
                 </div>
             </TableCell>
-            <TableCell>
-                <span className={`text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm ${statusClasses}`}>
-                    {item.status} {/* Exibe o nome do status */}
-                </span>
+            <TableCell className="text-left">
+                {renderTransactionStatusTag(translateTransactionStatus(item.status))}
             </TableCell>
             <TableCell className="">{item.code}</TableCell>
-            <TableCell>{item.typeTransaction}</TableCell>
+            <TableCell>{translateTransactionType(item.transactionType)}</TableCell>
             <TableCell className="text-right">{item.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</TableCell>
         </TableRow>
     )

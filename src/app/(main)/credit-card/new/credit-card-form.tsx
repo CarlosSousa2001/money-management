@@ -64,6 +64,8 @@ export function CreditCardForms() {
     })
 
     const { handleSubmit, setValue, getValues, trigger, watch, formState: { errors }, reset } = form;
+    
+    console.log(errors)
 
     async function onSubmit(data: CreditCardFormData) {
         // startTransition(true)

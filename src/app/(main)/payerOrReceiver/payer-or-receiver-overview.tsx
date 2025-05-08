@@ -11,32 +11,43 @@ import {
     Dialog,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { DataTablePagination } from "@/components/pagination-base";
 import { PayerOrReceiverTableRow } from "./payer-or-receiver-table-row";
 import { useState } from "react";
 import { useGetAllPayerOrReceiver } from "./hooks/use-get-all-payer-or-receiver";
-import { CirclePlus } from "lucide-react";
 import { PayerOrReceiverDialogForm } from "../transactions/form/payer-or-receiver-dialog-form";
+import { HeaderPageUi } from "@/components/header-page-ui";
+import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { TransactionPayerReceiverBase } from "../home/types/home-types-schema";
+import { translateTransactionType } from "@/utils/translations-transaction-type";
+import { translatePayerOrReceiver } from "@/utils/translations-payer-or-receiver";
 
 export function PayerOrReceiverOverview() {
 
+    const [searchValue, setSearchValue] = useState<string>("")
+    const [selectedTransactionType, setSelectedTransactionType] = useState<string | undefined>();
     const [currentPage, setCurrentPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
 
     const [openDialogNewPayerOrReceiver, setOpenDialogNewPayorReceiver] = useState(false)
     const { data, isLoading, isError } = useGetAllPayerOrReceiver({
-        search: "",
+        search: searchValue,
         page: currentPage,
         perPage: perPage
     })
-
 
     const totalItems = data?.meta.totalItems ?? 0;
     const totalPages = data?.meta.totalPages ?? 1;
     const hasNextPage = data?.meta.nextPage === true;
     const hasPrevPage = data?.meta.prevPage === true;
-    
-
 
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
@@ -49,15 +60,44 @@ export function PayerOrReceiverOverview() {
 
     const rows = data?.data && Array.isArray(data.data) ? data.data : [];
 
+    const handleOpenDialog = () => {
+        setOpenDialogNewPayorReceiver(true)
+    }
+
     return (
-        <div>
-            <div className="max-xs:hidden min-h-[400px]  h-[60vh]  overflow-auto border rounded-lg bg-slate-100 dark:bg-black/20 border-gray-200 dark:border-gray-700">
+        <div className="space-y-4 p-10  w-full m-auto">
+            <div className="space-y-6">
+                <div className="">
+                    <HeaderPageUi title="Gerenciamento de usuários" description="Gerencie seus pagadores e recebedores" onHandleClick={handleOpenDialog} onhandleClickTtitle="Novo pagador" />
+                </div>
+                <Separator />
+            </div>
+
+            <div className="mt-6 flex items-center gap-4">
+                <Input placeholder="Buscar por..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+
+                <Select
+                    value={selectedTransactionType}
+                    onValueChange={(value) => setSelectedTransactionType(value)}
+                >
+                    <SelectTrigger className="w-[240px]">
+                        <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {Object.entries(TransactionPayerReceiverBase).map(([key, value]) => (
+                            <SelectItem key={value} value={value}>
+                                {translatePayerOrReceiver(value)}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+
+            </div>
+            <div className="max-xs:hidden min-h-[400px] max-h-[60vh] overflow-auto border rounded-lg bg-slate-100 dark:bg-black/20 border-gray-200 dark:border-gray-700">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="max-w-[40px] w-[40px]" onClick={() => setOpenDialogNewPayorReceiver(true)}>
-                                <CirclePlus className="text-emerald-500 hover:text-emerald-400" />
-                            </TableHead>
+                            <TableHead className="max-w-[40px] w-[40px]"></TableHead>
                             <TableHead className="">Usuário</TableHead>
                             <TableHead className="">Tipo</TableHead>
                             <TableHead className=""></TableHead>

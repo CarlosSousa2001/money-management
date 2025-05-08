@@ -6,7 +6,7 @@ import { PaginatedBaseParams } from "@/utils/paginated-base";
 
 export function useGetAllPayerOrReceiver(params: PaginatedBaseParams) {
     return useQuery<PayerOrReceiverResponse>({
-        queryKey: ["payer"],
+        queryKey: ["payer", params],
         queryFn: () => gelAllPayerOrReceiver(params),
         staleTime: 1000 * 60 * 5,
         placeholderData: (previousData) => previousData ?? undefined

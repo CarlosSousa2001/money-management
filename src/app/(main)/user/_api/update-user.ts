@@ -8,18 +8,18 @@ export async function updateUser({
     birthDate,
     phone,
     imgUrl,
-    addresses,
+    address,
     cards,
 }: UserProfileUpadate) {
 
     const response = await http
-        .put<UserProfileUpadate>(`users/${id}`, {
+        .put<UserProfileUpadate>(`users`, {
             json: {
                 name,
                 birthDate,
                 phone,
                 imgUrl,
-                addresses,
+                address,
                 cards,
             },
         })

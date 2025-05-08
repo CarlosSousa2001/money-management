@@ -35,8 +35,8 @@ export const profileFormSchema = z.object({
         message: 'Data inválida (esperado: yyyy-MM-dd)',
     }),
 
-    imgUrl: z.string().url("Invalid URL").optional(),
-    addresses: z.array(addressSchema).optional().default([]),
+    imgUrl: z.string().optional(),
+    addresses: addressSchema.optional(),
 })
 export type ProfileFormValues = z.infer<typeof profileFormSchema>
 
@@ -47,16 +47,16 @@ export const profileDefaultValues: Partial<z.infer<typeof profileFormSchema>> = 
     phone: "",
     birthDate: "",
     imgUrl: "",
-    addresses: [
-        {
-            id: "",
-            street: "",
-            city: "",
-            state: "",
-            zipCode: "",
-            neighborhood: "",
-            complement: "",
-        },
-    ],
+    addresses:
+    {
+        id: "",
+        street: "",
+        city: "",
+        state: "",
+        zipCode: "",
+        neighborhood: "",
+        complement: "",
+    },
+
 };
 

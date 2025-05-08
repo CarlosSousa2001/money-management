@@ -46,7 +46,7 @@ export function PayerOrReceiverTableRow({ item }: PayerOrReceiverTableRowBase) {
     const { mutate: deletePayerOrReceiver, isPending } = useDeletePayerOrReceiver()
 
     return (
-        <TableRow className="h-[90px]">
+        <TableRow className="h-[64px]">
             <TableCell className="">
 
                 <DropdownMenu open={open} onOpenChange={setOpen}>

@@ -1,11 +1,8 @@
 "use client"
 
-import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
-import { z } from "zod"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -17,14 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
 import { profileDefaultValues, profileFormSchema, ProfileFormValues } from "./_zod/user-schema"
 import { formatPhone } from "@/utils/format-phone"
 import { DateTimePicker } from "@/components/extends/date-picker"
@@ -32,20 +21,20 @@ import { ptBR } from "date-fns/locale"
 import { getAddressByZipCode } from "@/utils/viacep-get-addresses-http"
 import { useEffect, useRef, useState } from "react"
 import { LoaderCircle, Search } from "lucide-react"
-import { uploadFileMinio } from "./_api/upload-file-minio"
 import Image from "next/image"
-import { updateUser } from "./_api/update-user"
 import { useGetUserDetails } from "./hooks/use-get-user-datails"
 import { useUserFormActions } from "./hooks/use-user-form-actions"
 import { format, parseISO } from "date-fns"
 import { UserProfileFormSkeleton } from "./user-profile-form-skeleton"
 import { useUpdateUser } from "./hooks/use-update-user"
+import { uploadEasyupload } from "./_api/upload-file-minio"
 
 
 
 export function UsersProfileForm() {
 
   const { data: user, isLoading, error, refetch: manualRefetch } = useGetUserDetails();
+  const [image, setImage] = useState<string | null>(null)
   const { handleUpdateUser, loadingUpdate, error: errorUpdateUser } = useUpdateUser();
 
   const form = useForm<ProfileFormValues>({
@@ -60,14 +49,7 @@ export function UsersProfileForm() {
 
   const imageProfile = watch("imgUrl")
 
-  console.log(errors)
-
-  const { fields, append } = useFieldArray({
-    name: "addresses",
-    control: form.control,
-  })
-
-  const zipCode = watch(`addresses.${fields.length - 1}.zipCode`)
+  const zipCode = watch(`addresses.zipCode`)
 
   async function fetchAddresViaCep() {
 
@@ -75,71 +57,34 @@ export function UsersProfileForm() {
     if (zipCode.length < 8) return
 
     const res = await getAddressByZipCode(zipCode)
-    setValue(`addresses.${fields.length - 1}.street`, res.street)
-    setValue(`addresses.${fields.length - 1}.city`, res.city)
-    setValue(`addresses.${fields.length - 1}.state`, res.state)
-    setValue(`addresses.${fields.length - 1}.zipCode`, res.zip_code)
-    setValue(`addresses.${fields.length - 1}.neighborhood`, res.neighborhood)
-    setValue(`addresses.${fields.length - 1}.complement`, res.complement)
+    setValue(`addresses.street`, res.street)
+    setValue(`addresses.city`, res.city)
+    setValue(`addresses.state`, res.state)
+    setValue(`addresses.zipCode`, res.zip_code)
+    setValue(`addresses.neighborhood`, res.neighborhood)
+    setValue(`addresses.complement`, res.complement)
   }
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   async function onSubmit(data: ProfileFormValues) {
-
     const file = fileInputRef.current?.files?.[0];
 
     if (file) {
+      const res = await uploadEasyupload(file);
 
-      const res = await uploadFileMinio({
-        fileName: file.name,
-        contentType: file.type,
-      });
-
-      const uploadUrl = decodeURIComponent(res.data.uploadUrl);
-      const publicUrl = res.data.fileUrl
-      console.log("uploadUrl", publicUrl)
-
-      setValue("imgUrl", publicUrl);
-
-      await uploadToMinio(file, uploadUrl);
-    }
-
-    const addresses = data.addresses?.map(address => {
-      // remove o id se estiver vazio ou undefined
-      if (!address.id) {
-        const { id, ...rest } = address;
-        return rest;
-      }
-      return address;
-    });
-    console.log(data)
-
-    const birthDateFormatted = data.birthDate ? format(parseISO(data.birthDate), 'yyyy-MM-dd') : '';
-
-    handleUpdateUser(data)
-  }
-
-  async function uploadToMinio(file: File, presignedUrl: string) {
-    try {
-      // Enviar o arquivo diretamente no corpo da requisição
-      const response = await fetch(presignedUrl, {
-        method: "PUT",
-        body: file,  // Envio diretamente o arquivo binário
-        headers: {
-          'Content-Type': file.type,  // Tipo de conteúdo do arquivo, ex: image/jpeg
-        }
-      });
-
-      if (!response.ok) {
-        console.log("Erro ao fazer upload do arquivo:", response.statusText);
+      if (!res?.url) {
+        console.error("Upload falhou: resposta sem URL");
+        return;
       }
 
-      console.log("Upload feito com sucesso!");
-    } catch (error) {
-      console.error("Erro durante o upload:", error);
+      setValue("imgUrl", res.url);
+      data.imgUrl = res.url;
     }
+
+    await handleUpdateUser(data);
   }
+
 
 
   useEffect(() => {
@@ -157,7 +102,7 @@ export function UsersProfileForm() {
         <div className="flex items-center gap-4">
           <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center overflow-hidden">
             {imageProfile ? (
-              <Image src={imageProfile} width={100} height={100} alt="profile-image-user" />
+              <Image src={"/" + imageProfile.split("/").pop()} width={100} height={100} alt="profile-image-user" />
             ) : (
               <img className="w-[120px] h-[160px] bg-white" />
             )}
@@ -171,7 +116,6 @@ export function UsersProfileForm() {
             />
           </div>
         </div>
-
         <FormField
           control={form.control}
           name="name"
@@ -253,86 +197,32 @@ export function UsersProfileForm() {
         />
 
         <div>
-          {fields.map((field, index) => (
-            <div key={field.id} className="grid grid-cols-2 gap-4">
-              <div className="col-span-2 flex items-center justify-between gap-4">
-                <FormField
-                  control={form.control}
-                  name={`addresses.${index}.zipCode`}
-                  render={({ field }) => (
-                    <FormItem className="w-full max-w-[200px]">
-                      <FormLabel>CEP</FormLabel>
-                      <FormControl>
-                        <div className="flex items-center">
-                          <Input {...field} />
-                          <Search className="size-5 -ml-8" onClick={() => fetchAddresViaCep()} />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-
-                <FormField
-                  control={form.control}
-                  name={`addresses.${index}.street`}
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Rua</FormLabel>
-                      <FormControl>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="col-span-2 flex items-center justify-between gap-4">
+              <FormField
+                control={form.control}
+                name={`addresses.zipCode`}
+                render={({ field }) => (
+                  <FormItem className="w-full max-w-[200px]">
+                    <FormLabel>CEP</FormLabel>
+                    <FormControl>
+                      <div className="flex items-center">
                         <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <FormField
-                control={form.control}
-                name={`addresses.${index}.neighborhood`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bairro</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
+                        <Search className="size-5 -ml-8" onClick={() => fetchAddresViaCep()} />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+
               <FormField
                 control={form.control}
-                name={`addresses.${index}.complement`}
+                name={`addresses.street`}
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Complemento</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`addresses.${index}.city`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Cidade</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`addresses.${index}.state`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Estado</FormLabel>
+                  <FormItem className="flex-1">
+                    <FormLabel>Rua</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -341,7 +231,59 @@ export function UsersProfileForm() {
                 )}
               />
             </div>
-          ))}
+            <FormField
+              control={form.control}
+              name={`addresses.neighborhood`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Bairro</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`addresses.complement`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Complemento</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`addresses.city`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cidade</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`addresses.state`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Estado</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
         </div>
         {loadingUpdate ? (

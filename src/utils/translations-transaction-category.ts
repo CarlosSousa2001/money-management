@@ -1,7 +1,6 @@
 import { TransactionCategory } from "@/app/(main)/home/types/home-types-schema";
 
 export const transactionCategoryTranslations: Record<TransactionCategory, string> = {
-    [TransactionCategory.SCHEDULED_DATE]: "Data agendada",
     [TransactionCategory.SERVICES]: "Serviços",
     [TransactionCategory.FOOD]: "Alimentação",
     [TransactionCategory.TRANSPORT]: "Transporte",

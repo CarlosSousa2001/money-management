@@ -52,7 +52,7 @@ interface UserProfileBase {
     birthDate?: string
     phone?: string
     imgUrl?: string | null
-    addresses?: Address[]
+    address?: Address
     cards?: Card[]
     type: TransactionPayerReceiverBase
 }

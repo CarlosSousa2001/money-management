@@ -40,8 +40,8 @@ export enum PaymentType {
     PIX = "PIX",
     TED = "TED",
     BANK_SLIP = "BANK_SLIP",
-    CREDIT_CARD = "CREDIT_CARD",
-    DEBIT_CARD = "DEBIT_CARD",
+    CREDIT = "CREDIT",
+    DEBIT = "DEBIT",
     CASH = "CASH",
 }
 

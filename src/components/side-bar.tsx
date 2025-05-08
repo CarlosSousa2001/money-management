@@ -17,8 +17,15 @@ interface SideBarBase {
   path: string;
   name: string;
   icon: JSX.Element;
-  module: "Home" | "Utilities" | "Extra" | "GERENCIAMENTO";
+  module: "Home" | "Utilities" | "Extra" | "Manager";
 }
+
+const moduleLabels: Record<SideBarBase["module"], string> = {
+  Home: "Início",
+  Utilities: "Utilitários",
+  Extra: "Extras",
+  Manager: "Gerenciamento",
+};
 
 export function SideBar() {
   const router = useRouter();
@@ -26,17 +33,17 @@ export function SideBar() {
 
   const data_sidebar: SideBarBase[] = [
     { path: "/home", name: "Dashboard", icon: <Home size={20} />, module: "Home" },
-    { path: "/transactions/overview", name: "Transactions", icon: <CreditCard size={20} />, module: "Utilities" },
-    { path: "/plan", name: "Plan", icon: <Clipboard size={20} />, module: "Utilities" },
-    { path: "/credit-card/new", name: "Credit card", icon: <WalletCards size={20} />, module: "Utilities" },
-    { path: "/budget", name: "Budget", icon: <DollarSign size={20} />, module: "Utilities" },
-    { path: "/payerOrReceiver", name: "Pagadores", icon: <Users size={20} />, module: "GERENCIAMENTO" },
+    { path: "/transactions/overview", name: "Transações", icon: <CreditCard size={20} />, module: "Utilities" },
+    // { path: "/plan", name: "Plan", icon: <Clipboard size={20} />, module: "Utilities" },
+    { path: "/credit-card/new", name: "Cartão de crédito", icon: <WalletCards size={20} />, module: "Utilities" },
+    // { path: "/budget", name: "Budget", icon: <DollarSign size={20} />, module: "Utilities" },
+    { path: "/payerOrReceiver", name: "Pagadores", icon: <Users size={20} />, module: "Manager" },
 
-    { path: "/help", name: "Help", icon: <HelpCircle size={20} />, module: "Extra" },
-    { path: "/settings", name: "Settings", icon: <Settings size={20} />, module: "Extra" },
+    { path: "/help", name: "Ajuda", icon: <HelpCircle size={20} />, module: "Extra" },
+    { path: "/settings", name: "Configurações", icon: <Settings size={20} />, module: "Extra" },
   ];
 
-  const modules = ["Home", "Utilities", "GERENCIAMENTO", "Extra",];
+  const modules: SideBarBase["module"][] = ["Home", "Utilities", "Manager", "Extra"];
 
   return (
     <aside className="w-64 h-screen p-4">
@@ -51,16 +58,19 @@ export function SideBar() {
 
           return (
             <div key={module} className="mb-4">
-              <h3 className="text-sm font-semibold text-gray-600 uppercase mb-2">{module}</h3>
+              <h3 className="text-sm font-semibold text-gray-600 uppercase mb-2">
+                {moduleLabels[module]}
+              </h3>
               <ul>
                 {moduleItems.map((item) => (
                   <li key={item.path}>
                     <button
                       onClick={() => router.push(item.path)}
-                      className={`flex items-center w-full px-4 py-2 my-2 rounded-lg transition ${pathname === item.path
-                        ? "border-2 border-blue-500 text-blue-500"
-                        : "hover:underline"
-                        }`}
+                      className={`flex items-center w-full px-4 py-2 my-2 rounded-lg transition ${
+                        pathname === item.path
+                          ? "border-2 border-blue-500 text-blue-500"
+                          : "hover:underline"
+                      }`}
                     >
                       {item.icon}
                       <span className="ml-3">{item.name}</span>

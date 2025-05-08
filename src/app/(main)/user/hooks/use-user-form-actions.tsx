@@ -9,35 +9,34 @@ export function useUserFormActions(
     if (!userData) return;
 
     const { data } = userData;
-
     reset({
       id: data.id,
       name: data.name,
       email: data.email,
       birthDate: data.birthDate ?? "",
       phone: data.phone ?? "",
-      imgUrl: data.imgUrl ?? "",
-      addresses: (data.addresses && data.addresses.length > 0)
-        ? data.addresses.map((address) => ({
-            id: address.id ?? undefined,
-            street: address.street,
-            complement: address.complement ?? "",
-            city: address.city,
-            state: address.state,
-            neighborhood: address.neighborhood,
-            zipCode: address.zipCode,
-          }))
-        : [
-            {
-              id: "",
-              street: "",
-              city: "",
-              state: "",
-              zipCode: "",
-              neighborhood: "",
-              complement: "",
-            },
-          ],
+      imgUrl: data.imgUrl ? data.imgUrl.split("/").pop() ?? "" : "",
+      addresses: data.address
+        ? {
+          id: data.address.id,
+          street: data.address.street,
+          city: data.address.city,
+          state: data.address.state,
+          zipCode: data.address.zipCode,
+          neighborhood: data.address.neighborhood,
+          complement: data.address.complement,
+        }
+        :
+        {
+          id: "",
+          street: "",
+          city: "",
+          state: "",
+          zipCode: "",
+          neighborhood: "",
+          complement: "",
+        },
+
     });
   }
 

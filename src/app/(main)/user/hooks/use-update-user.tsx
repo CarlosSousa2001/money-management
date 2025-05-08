@@ -11,14 +11,9 @@ export function useUpdateUser() {
         try {
             setLoadingUpdate(true);
             setError(null);
-
-            const addressWithoutId = data.addresses?.map((item) => {
-                if (item.id === "") {
-                    const { id, ...rest } = item;
-                    return rest;
-                }
-                return item;
-            });
+            const addressWithoutId = data.addresses?.id === "" 
+                ? (({ id, ...rest }) => rest)(data.addresses) 
+                : data.addresses;
 
             await updateUser({
                 id: data.id ?? "",
@@ -27,7 +22,7 @@ export function useUpdateUser() {
                 phone: data.phone,
                 birthDate: data.birthDate ?? undefined,
                 imgUrl: data.imgUrl ?? undefined,
-                addresses: addressWithoutId ?? undefined,
+                address: addressWithoutId ?? undefined,
             });
             toast.success("Usuário atualizado com sucesso!");
         } catch (err: any) {
