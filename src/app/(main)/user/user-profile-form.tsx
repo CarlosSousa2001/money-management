@@ -83,6 +83,7 @@ export function UsersProfileForm() {
     }
 
     await handleUpdateUser(data);
+    manualRefetch()
   }
 
 

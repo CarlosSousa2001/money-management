@@ -24,26 +24,19 @@ interface Card {
     status: number
 }
 
-export interface FileUploadMinio {
-    fileName: string
-    contentType: string
-}
-
-export interface FileUploadMinioResponseBase {
-    data: {
-        uploadUrl: string
-        fileUrl: string
-    }
-    message: string
-    success: boolean
-}
-
-
-export type FileUploadMinioREquest = FileUploadMinio
-export type FileUploadMinioResponse = FileUploadMinioResponseBase
-
-
 // User Profile
+
+interface PermissionsBase {
+    id: number,
+    name: string
+    slugName: string
+}
+
+interface RolesBase {
+    id: number
+    name: string
+    permissions: PermissionsBase[]
+}
 
 interface UserProfileBase {
     id: string
@@ -55,9 +48,10 @@ interface UserProfileBase {
     address?: Address
     cards?: Card[]
     type: TransactionPayerReceiverBase
+    roles: RolesBase[]
 }
 
 export type UserProfileUpadate = Omit<UserProfileBase, "type">
 
-export type UserProfileMeResponse= ResponseDataBaseSimple<UserProfileBase>
+export type UserProfileMeResponse = ResponseDataBaseSimple<UserProfileBase>
 
