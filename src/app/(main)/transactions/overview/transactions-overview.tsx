@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table"
 
 import { DataTablePagination } from "@/components/pagination-base";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useGetAllTransactions } from "../hooks/use-get-all-transactions";
 import { TransactionsTableRow } from "./transactions-table-row";
 import { Input } from "@/components/ui/input";
@@ -26,120 +26,6 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/extends/calendar-edit";
 
 
-const transactions = [
-    {
-        id: "txn_001",
-        description: "Payment for subscription",
-        email: "customer@example.com",
-        currency: "USD",
-        amount: 199.99,
-        transactionScheduledDate: "2025-04-28T10:00:00Z",
-        category: "Subscription",
-        transactionType: "Credit",
-        status: "Completed",
-        payerReceiverId: "user_001",
-        payerReceiver: {
-            name: "John Doe",
-            description: "Regular customer",
-            imgUrl: "https://via.placeholder.com/40",
-            userType: "Customer"
-        },
-        payments: [
-            {
-                id: "pay_001",
-                amount: 199.99,
-                installments: 1,
-                valuePerInstallment: 199.99,
-                paymentType: "Credit Card",
-                cardId: "card_001"
-            }
-        ]
-    },
-    {
-        id: "txn_002",
-        description: "Payment for subscription",
-        email: "customer@example.com",
-        currency: "USD",
-        amount: 199.99,
-        transactionScheduledDate: "2025-04-28T10:00:00Z",
-        category: "Subscription",
-        transactionType: "Credit",
-        status: "Completed",
-        payerReceiverId: "user_001",
-        payerReceiver: {
-            name: "John Doe",
-            description: "Regular customer",
-            imgUrl: "https://via.placeholder.com/40",
-            userType: "Customer"
-        },
-        payments: [
-            {
-                id: "pay_001",
-                amount: 199.99,
-                installments: 1,
-                valuePerInstallment: 199.99,
-                paymentType: "Credit Card",
-                cardId: "card_001"
-            }
-        ]
-    },
-    {
-        id: "txn_003",
-        description: "Payment for subscription",
-        email: "customer@example.com",
-        currency: "USD",
-        amount: 199.99,
-        transactionScheduledDate: "2025-04-28T10:00:00Z",
-        category: "Subscription",
-        transactionType: "Credit",
-        status: "Completed",
-        payerReceiverId: "user_001",
-        payerReceiver: {
-            name: "John Doe",
-            description: "Regular customer",
-            imgUrl: "https://via.placeholder.com/40",
-            userType: "Customer"
-        },
-        payments: [
-            {
-                id: "pay_001",
-                amount: 199.99,
-                installments: 1,
-                valuePerInstallment: 199.99,
-                paymentType: "Credit Card",
-                cardId: "card_001"
-            }
-        ]
-    },
-    {
-        id: "txn_004",
-        description: "Payment for subscription",
-        email: "customer@example.com",
-        currency: "USD",
-        amount: 199.99,
-        transactionScheduledDate: "2025-04-28T10:00:00Z",
-        category: "Subscription",
-        transactionType: "Credit",
-        status: "Completed",
-        payerReceiverId: "user_001",
-        payerReceiver: {
-            name: "John Doe",
-            description: "Regular customer",
-            imgUrl: "https://via.placeholder.com/40",
-            userType: "Customer"
-        },
-        payments: [
-            {
-                id: "pay_001",
-                amount: 199.99,
-                installments: 1,
-                valuePerInstallment: 199.99,
-                paymentType: "Credit Card",
-                cardId: "card_001"
-            }
-        ]
-    }
-];
 
 export function TransactionsOverview() {
 
@@ -148,9 +34,6 @@ export function TransactionsOverview() {
         from: new Date(2022, 0, 20),
         to: addDays(new Date(2022, 0, 20), 20),
     })
-
-    console.log("date", date)
-
     const [currentPage, setCurrentPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
 
@@ -159,7 +42,6 @@ export function TransactionsOverview() {
         page: currentPage,
         perPage: perPage
     })
-
 
     const totalItems = data?.meta.totalItems ?? 0;
     const totalPages = data?.meta.totalPages ?? 1;
@@ -173,8 +55,10 @@ export function TransactionsOverview() {
 
     const handlePageSizeChange = (newPerPage: number) => {
         setPerPage(newPerPage);
-        setCurrentPage(1); 
+        setCurrentPage(1);
     };
+
+    const rows = data?.data && Array.isArray(data.data) ? data.data : [];
 
     return (
         <div className="grid grid-cols-1 gap-4">
@@ -233,11 +117,12 @@ export function TransactionsOverview() {
                             <TableHead title="Status">Status</TableHead>
                             <TableHead title="Payer/Receiver">Pagador/Recebedor</TableHead>
                             <TableHead title="Payments">Pagamentos</TableHead>
+                            <TableHead title=""></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {Array.isArray(data?.data) && data.data.length > 0 ? (
-                            data.data.map((transaction) => (
+                        {rows.length > 0 ? (
+                            rows.map((transaction) => (
                                 <TransactionsTableRow key={transaction.id} transaction={transaction} />
                             ))
                         ) : (

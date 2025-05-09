@@ -53,12 +53,11 @@ import { translateTransactionType } from "@/utils/translations-transaction-type"
 import { translateTransactionStatus } from "@/utils/translations-transactions-status"
 import { translateTransactionCategory } from "@/utils/translations-transaction-category"
 import { useCreateTransaction } from "../hooks/use-create-trasactions"
-import { TransactionRequest } from "../types/transactions-schema-types"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useTransactionFormActions } from "../../user/hooks/use-transaction-form-action"
 import { useGetTransactionById } from "../hooks/use-get-transactions-by-id"
 import { useUpdateTransaction } from "../hooks/use-update-transactions"
-import { useGetAllCards } from "../../credit-card/new/hooks/use-get-all-cards"
+import { useGetAllCards } from "../../card/new/hooks/use-get-all-cards"
 import { translatePaymentType } from "@/utils/translations-payment-type"
 import { toast } from "sonner"
 
@@ -147,15 +146,13 @@ export function TransactionsForm() {
 
     handleCreateTransactionsFn(data);
   }
-
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-    // Verifique se transactionData existe antes de chamar resetTransactionForm
-    console.log(transactionData)
     if (transactionData) {
       resetTransactionForm(transactionData);
     }
-    // Adicione transactionData e resetTransactionForm às dependências
   }, [transactionData]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   useEffect(() => {
     if (selectedPaymentType === PaymentType.CREDIT || selectedPaymentType === PaymentType.DEBIT) {
@@ -190,7 +187,7 @@ export function TransactionsForm() {
       toast.error("O formulário contém erros. Verifique os campos destacados.");
     }
   }, [errors]);
-  
+
 
   return (
     <Form {...form}>

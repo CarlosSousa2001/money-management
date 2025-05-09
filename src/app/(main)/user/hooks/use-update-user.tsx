@@ -11,8 +11,8 @@ export function useUpdateUser() {
         try {
             setLoadingUpdate(true);
             setError(null);
-            const addressWithoutId = data.addresses?.id === "" 
-                ? (({ id, ...rest }) => rest)(data.addresses) 
+            const addressWithoutId = data.addresses?.id === ""
+                ? (({ id, ...rest }) => rest)(data.addresses)
                 : data.addresses;
 
             await updateUser({
@@ -25,6 +25,7 @@ export function useUpdateUser() {
                 address: addressWithoutId ?? undefined,
             });
             toast.success("Usuário atualizado com sucesso!");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             console.error("Erro ao atualizar usuário:", err);
             toast.error("Erro ao atualizar usuário");

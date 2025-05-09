@@ -39,6 +39,7 @@ const chartConfig = {
     },
 } satisfies ChartConfig
 export function HomeCharts() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [chartData, setChartData] = useState<any[]>([])
     const [status, setStatus] = useState<TransactionStatusBase>(TransactionStatusBase.COMPLETED)
     const [year, setYear] = useState<number>(new Date().getFullYear())

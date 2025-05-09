@@ -1,4 +1,4 @@
-import { cardTypeEnumBase } from "@/app/(main)/credit-card/new/types/credit-card-types-schema";
+import { cardTypeEnumBase } from "@/app/(main)/card/new/types/credit-card-types-schema";
 
 
 export const cardTypeTranslations: Record<cardTypeEnumBase, string> = {

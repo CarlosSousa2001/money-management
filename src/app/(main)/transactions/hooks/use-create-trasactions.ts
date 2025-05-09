@@ -30,6 +30,8 @@ export function useCreateTransaction(onSuccessCallback?: () => void) {
         },
         onSuccess: () => {
             toast.success("Transação criada com sucesso!");
+            queryClient.invalidateQueries({ queryKey: ["transactions"] });
+
             onSuccessCallback?.();
         },
         onError: (error) => {

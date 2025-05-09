@@ -101,6 +101,7 @@ export function PayerOrReceiverOverview() {
                             <TableHead className="">Usuário</TableHead>
                             <TableHead className="">Tipo</TableHead>
                             <TableHead className=""></TableHead>
+                            <TableHead className=""></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -109,20 +110,11 @@ export function PayerOrReceiverOverview() {
                                 <PayerOrReceiverTableRow key={item.id} item={item} />
                             ))
                         ) : (
-                            <TableRow className="h-[90px]">
-                                <TableCell className="">
-                                    <div className="flex items-center justify-center w-full h-full">
-                                        {isLoading ? (
-                                            <p>Carregando...</p>
-                                        ) : isError ? (
-                                            <p>Erro ao carregar os dados</p>
-                                        ) : (
-                                            <p>Nenhum dado encontrado</p>
-                                        )}
-                                    </div>
+                            <TableRow>
+                                <TableCell colSpan={8} className="text-center py-10 text-muted-foreground">
+                                    Nenhuma transação encontrada.
                                 </TableCell>
                             </TableRow>
-
                         )}
                     </TableBody>
                 </Table>

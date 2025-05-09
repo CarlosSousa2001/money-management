@@ -85,7 +85,7 @@ export function CreditCardForms() {
         }
         const response = await createCardCreditDebit(data);
 
-        if (response.status !== 200) {
+        if (response.status !== 201) {
             console.error("Error updating name:");
             toast.error("Erro ao criar cartão")
             // startTransition(false)

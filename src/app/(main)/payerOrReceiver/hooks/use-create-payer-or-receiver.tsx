@@ -22,6 +22,7 @@ export function useCreatePayerOrReceiver() {
             });
             toast.success("Usuário atualizado com sucesso!");
             return res;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             console.error("Erro ao atualizar usuário:", err);
             toast.error("Erro ao atualizar usuário");

@@ -51,7 +51,7 @@ interface UserProfileBase {
     roles: RolesBase[]
 }
 
-export type UserProfileUpadate = Omit<UserProfileBase, "type">
+export type UserProfileUpadate = Omit<UserProfileBase, "type" | "roles">
 
 export type UserProfileMeResponse = ResponseDataBaseSimple<UserProfileBase>
 
