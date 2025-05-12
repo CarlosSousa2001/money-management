@@ -6,7 +6,7 @@ import { TransactionResponsePaginated } from "../types/transactions-schema-types
 
 export function useGetAllTransactions(params: PaginatedBaseParams) {
     return useQuery<TransactionResponsePaginated>({
-        queryKey: ["transactions", params],
+        queryKey: ["transactions", JSON.stringify(params)],
         queryFn: () => getAllTransactions(params),
         staleTime: 1000 * 60 * 5,
         placeholderData: (previousData) => previousData ?? undefined

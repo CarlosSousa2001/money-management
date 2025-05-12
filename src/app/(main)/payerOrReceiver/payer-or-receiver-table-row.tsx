@@ -32,6 +32,8 @@ import {
     HoverCardContent,
     HoverCardTrigger,
 } from "@/components/ui/hover-card"
+import { AlertDelete } from "@/components/alert-delete";
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 
 interface PayerOrReceiverTableRowBase {
@@ -41,9 +43,15 @@ interface PayerOrReceiverTableRowBase {
 export function PayerOrReceiverTableRow({ item }: PayerOrReceiverTableRowBase) {
 
     const [openDialogNewPayerOrReceiver, setOpenDialogNewPayorReceiver] = useState(false)
+    const [opneDialogAlertDelete, setOpenDialogAlertDelete] = useState(false)
     const [open, setOpen] = useState(false)
 
     const { mutate: deletePayerOrReceiver, isPending } = useDeletePayerOrReceiver()
+
+    function handleDeleteitem(id: string) {
+        deletePayerOrReceiver(id)
+        setOpen(false)
+    }
 
     return (
         <TableRow className="h-[64px]">
@@ -54,7 +62,12 @@ export function PayerOrReceiverTableRow({ item }: PayerOrReceiverTableRowBase) {
                         <Ellipsis className="size-5" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
-                        <DropdownMenuItem onClick={() => deletePayerOrReceiver(item.id)}>Excluir</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                            setOpenDialogAlertDelete(true)
+                            setOpen(false)
+                        }}>
+                            Excluir
+                        </DropdownMenuItem>
                         <DropdownMenuItem onSelect={(e) => e.preventDefault()} onClick={() => {
                             setOpenDialogNewPayorReceiver(true)
                             setOpen(false)
@@ -99,10 +112,12 @@ export function PayerOrReceiverTableRow({ item }: PayerOrReceiverTableRowBase) {
                 </Dialog>
             </TableCell>
 
-
-            {/* <TableCell className="">
-                <Trash className="size-4 text-red-500 hover:text-red-400 cursor-pointer" />
-            </TableCell>  */}
-        </TableRow>
+            <TableCell >
+                <AlertDialog open={opneDialogAlertDelete} onOpenChange={setOpenDialogAlertDelete}>
+                    <AlertDialogTrigger></AlertDialogTrigger>
+                    <AlertDelete onConfirm={() => handleDeleteitem(item.id)} />
+                </AlertDialog>
+            </TableCell>
+        </TableRow >
     )
 }

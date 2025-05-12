@@ -24,9 +24,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         '/auth/reset-password',
     ];
 
+    const openAuthenticatedRoutes = [
+        '/home',
+        '/user',
+    ];
+
     useEffect(() => {
         const token = getCookie('sshtk');
         const isPublic = publicRoutes.some(route => pathname.startsWith(route));
+        const isOpenAuthenticated = openAuthenticatedRoutes.some(route => pathname.startsWith(route));
 
         if (isPublic) {
             setLoading(false);
@@ -42,18 +48,46 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         const authenticateUser = async () => {
             const isValid = await validateToken(token as string);
-            if (isValid) {
-                setIsAuthenticated(true);
-            } else {
+
+            if (!isValid) {
                 setIsAuthenticated(false);
+                setLoading(false);
                 router.push('/auth/sign-in');
+                return;
             }
 
+            if (isOpenAuthenticated) {
+                setIsAuthenticated(true);
+                setLoading(false);
+                return;
+            }
+
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                setIsAuthenticated(false);
+                setLoading(false);
+                router.push('/auth/sign-in');
+                return;
+            }
+
+            const user = JSON.parse(userStr);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const allPermissions = user.roles?.flatMap((role: any) => role.permissions.map((p: any) => p.name)) || [];
+
+            if (!allPermissions.includes(pathname)) {
+                setIsAuthenticated(false);
+                setLoading(false);
+                router.push('/home');
+                return;
+            }
+
+            setIsAuthenticated(true);
             setLoading(false);
         };
 
         authenticateUser();
     }, [pathname]);
+
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, loading }}>

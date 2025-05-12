@@ -137,6 +137,7 @@ export const CalendarDatePicker = React.forwardRef<
       setYearFrom(from.getFullYear());
       setMonthTo(to);
       setYearTo(to.getFullYear());
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       closeOnSelect && setIsPopoverOpen(false);
     };
 
@@ -313,6 +314,7 @@ export const CalendarDatePicker = React.forwardRef<
         const increment = event.deltaY > 0 ? -1 : 1;
         newDate.setDate(newDate.getDate() + increment);
         if (newDate <= (date.to as Date)) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           numberOfMonths === 2
             ? onDateSelect({ from: newDate, to: new Date(date.to as Date) })
             : onDateSelect({ from: newDate, to: newDate });

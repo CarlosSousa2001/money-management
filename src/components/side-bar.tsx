@@ -35,7 +35,7 @@ export function SideBar() {
     { path: "/home", name: "Dashboard", icon: <Home size={20} />, module: "Home" },
     { path: "/transactions/overview", name: "Transações", icon: <CreditCard size={20} />, module: "Utilities" },
     // { path: "/plan", name: "Plan", icon: <Clipboard size={20} />, module: "Utilities" },
-    { path: "/credit-card/new", name: "Cartão de crédito", icon: <WalletCards size={20} />, module: "Utilities" },
+    { path: "/card/new", name: "Cartão de crédito", icon: <WalletCards size={20} />, module: "Utilities" },
     // { path: "/budget", name: "Budget", icon: <DollarSign size={20} />, module: "Utilities" },
     { path: "/payerOrReceiver", name: "Pagadores", icon: <Users size={20} />, module: "Manager" },
 

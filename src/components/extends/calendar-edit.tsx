@@ -220,6 +220,7 @@ function Calendar({
             {...props}
           />
         ),
+      /* eslint-disable react/no-children-prop */
         MonthGrid: ({ className, children, ...props }) => (
           <MonthGrid
             children={children}

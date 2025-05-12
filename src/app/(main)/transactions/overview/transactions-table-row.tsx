@@ -21,22 +21,40 @@ import { translateTransactionStatus } from "@/utils/translations-transactions-st
 import { TransactionResponseUnit } from "../types/transactions-schema-types";
 import { renderCurrencyTag } from "@/utils/currency-color-map";
 import { renderTransactionStatusTag } from "@/utils/status-color-map";
+import { useDeleteTransactionsSoftDelete } from "../hooks/use-delete-transactions-soft-delete";
+import { useState } from "react";
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { AlertDelete } from "@/components/alert-delete";
 
 interface TransactionProps {
     transaction: TransactionResponseUnit
 }
 
 export function TransactionsTableRow({ transaction }: TransactionProps) {
+    const [opneDialogAlertDelete, setOpenDialogAlertDelete] = useState(false)
+    const [open, setOpen] = useState(false)
+
+    const { mutate: deleteTransaction, isPending } = useDeleteTransactionsSoftDelete()
+
+    function handleDeleteitem(id: string) {
+        console.log("Deleting transaction with ID:", id)
+        deleteTransaction(id)
+        setOpen(false)
+    }
     return (
         <TableRow key={transaction.id} className="h-[64px]">
             <TableCell className="">
-
-                <DropdownMenu>
+                <DropdownMenu open={open} onOpenChange={setOpen}>
                     <DropdownMenuTrigger asChild>
                         <Ellipsis className="size-5" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
-                        <DropdownMenuItem>Excluir</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                            setOpenDialogAlertDelete(true)
+                            setOpen(false)
+                        }}>
+                            Excluir
+                        </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                             <Link href={{ pathname: "/transactions/form", query: { id: transaction.id } }} className="w-full text-left">
                                 Editar
@@ -93,6 +111,13 @@ export function TransactionsTableRow({ transaction }: TransactionProps) {
                         ))}
                     </HoverCardContent>
                 </HoverCard>
+            </TableCell>
+
+            <TableCell >
+                <AlertDialog open={opneDialogAlertDelete} onOpenChange={setOpenDialogAlertDelete}>
+                    <AlertDialogTrigger></AlertDialogTrigger>
+                    <AlertDelete onConfirm={() => handleDeleteitem(transaction.id)} />
+                </AlertDialog>
             </TableCell>
         </TableRow>
     )

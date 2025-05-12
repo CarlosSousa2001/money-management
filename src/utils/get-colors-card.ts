@@ -1,4 +1,4 @@
-import { Color } from "@/app/(main)/credit-card/new/credit-card-form";
+import { Color } from "@/app/(main)/card/new/credit-card-form";
 
 export const getColorsCard = (color: Color) => {
     const colorVariants: { [key in Color]: [string, string, string] } = {

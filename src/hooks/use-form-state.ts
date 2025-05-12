@@ -1,3 +1,4 @@
+import { getProfile } from '@/app/(main)/user/_api/get-me'
 import { FormEvent, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -36,8 +37,8 @@ export function useFormState(
       }
 
       if (auth) {
-        // const user_datails = await getDetailsMe()
-        // localStorage.setItem('user', JSON.stringify(user_datails))
+        const user_datails = await getProfile()
+        localStorage.setItem('user', JSON.stringify(user_datails.data))
       }
 
       setFormState(state)
