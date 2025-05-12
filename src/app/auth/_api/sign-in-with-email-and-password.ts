@@ -17,13 +17,27 @@ interface SignInWithEmailAndPasswordResponse {
 
 export async function SignInWithEmailAndPassword({ email, password }: SignInWithEmailAndPassword) {
 
-    const response = await http
-        .post("auth/sign-in", {
-            json: {
-                email,
-                password,
-            },
-        }).json<SignInWithEmailAndPasswordResponse>();
+    try {
+        const response = await http
+            .post("auth/sign-in", {
+                json: {
+                    email,
+                    password,
+                },
+            })
+            .json<SignInWithEmailAndPasswordResponse>();
 
-    return response.data.jwToken;
+        console.log("Resposta da API:", response);
+
+        if (!response?.data?.jwToken) {
+            throw new Error("jwToken não encontrado na resposta");
+        }
+
+        return response.data.jwToken;
+
+    } catch (error) {
+        console.error("Erro ao autenticar:", error);
+        return null
+    }
+
 }

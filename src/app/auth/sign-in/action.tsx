@@ -29,6 +29,14 @@ export async function signInWithEmailAndPassword(data: FormData) {
             password,
         })
 
+        if (!token) {
+            return {
+                success: false,
+                message: 'Error no servidor, entre em contato com o suporte.',
+                errors: null,
+            }
+        }
+
         const cookieStore = await cookies();
 
         cookieStore.set('sshtk', token, {
