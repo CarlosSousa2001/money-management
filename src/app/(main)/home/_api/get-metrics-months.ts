@@ -3,8 +3,6 @@ import { MetricsResponse, TransactionStatusBase } from "../types/home-types-sche
 
 export async function getMetricsMonths(year: number, params: TransactionStatusBase) {
 
-    
-
     const response = await http
         .get('dashboard',
             {

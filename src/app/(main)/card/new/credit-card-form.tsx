@@ -38,7 +38,7 @@ import { translateCardType } from "@/utils/translatcard-type"
 import { useEffect, useState, useTransition } from "react"
 import { createCardCreditDebit } from "./_api/create-card-credit-debit"
 import { toast } from "sonner"
-import { Loader2Icon } from "lucide-react"
+import { CreditCard, Loader2Icon } from "lucide-react"
 import { getColorNameFromArray, getColorsCard } from "@/utils/get-colors-card"
 import { useData } from "@/hooks/use-data"
 import { getAllCardCreditDebit } from "./_api/get-all-card-credit-debit"
@@ -64,7 +64,7 @@ export function CreditCardForms() {
     })
 
     const { handleSubmit, setValue, getValues, trigger, watch, formState: { errors }, reset } = form;
-    
+
     console.log(errors)
 
     async function onSubmit(data: CreditCardFormData) {
@@ -164,6 +164,18 @@ export function CreditCardForms() {
                             ))}
 
                         </Swiper>
+
+                        {
+                            (!data?.data || data.data.length === 0) && (
+                                <div className="w-full h-58 m-auto rounded-2xl border border-black dark:border-white dark:text-slate-100 flex flex-col items-center justify-center space-y-3">
+                                    <CreditCard className="size-8 dark:text-slate-300" />
+                                    <span className="text-center text-sm sm:text-base">
+                                        Você ainda não possui cartões cadastrados
+                                    </span>
+                                </div>
+                            )
+                        }
+
                     </>
 
                 </div>

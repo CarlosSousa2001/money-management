@@ -47,7 +47,7 @@ export function SideBar() {
 
   return (
     <aside className="w-64 h-screen p-4">
-      <h2 className="text-xl font-extrabold mb-6 bg-blue-400 text-white p-3 rounded-lg">
+      <h2 className="text-xl font-extrabold mb-6 bg-primary text-white p-3 rounded-lg">
         💰 FinancialsNice
       </h2>
 
@@ -68,7 +68,7 @@ export function SideBar() {
                       onClick={() => router.push(item.path)}
                       className={`flex items-center w-full px-4 py-2 my-2 rounded-lg transition ${
                         pathname === item.path
-                          ? "border-2 border-blue-500 text-blue-500"
+                          ? "bg-primary text-white"
                           : "hover:underline"
                       }`}
                     >

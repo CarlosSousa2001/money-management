@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import { HomeCharts } from "./home-charts";
 import { HomeDataTable } from "./home-data-table";
+import { useWalletHealth } from "./hooks/use-wallet-health";
 
 const transactions = [
     {
@@ -40,6 +41,8 @@ function getTodayDate() {
 
 export default function HomePage() {
 
+    const { data: walletHealth, isLoading, isError, error } = useWalletHealth();
+
     const [todayDate, setTodayDate] = useState(getTodayDate());
     useEffect(() => {
         // Atualiza a data de hoje, se necessário (não é obrigatório para dados mockados estáticos)
@@ -58,6 +61,9 @@ export default function HomePage() {
         }
     }
 
+
+
+
     return (
         <div className="flex flex-col w-full p-4 2md:p-0">
             <div className="flex-4">
@@ -66,25 +72,19 @@ export default function HomePage() {
                         <HomeCharts />
                     </div>
                     <div className="col-span-6 2md:col-span-2 grid grid-cols-1 md:grid-cols-2 2md:grid-cols-1 gap-8">
-                        <CardProgressItem title={"Saúde da carteira"} icon={<Settings className="text-green-600" />} color={"bg-green-200"}>
-                            <div className="flex items-center justify-between mb-3">
-                                <span>Meta</span>
-                                <span>75%</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
-                                <div className="bg-green-300  h-1.5 rounded-full dark:bg-green-300" style={{ width: "75%" }}></div>
-                            </div>
-                        </CardProgressItem>
+                        <CardProgressItem
+                            title="Saúde da carteira"
+                            icon={<Settings />}
+                            percentage={walletHealth?.data.value ?? 0}
+                            variant="green"
+                        />
 
-                        <CardProgressItem title={"Gastos"} icon={<Box className="text-red-600" />} color={"bg-red-200"}>
-                            <div className="flex items-center justify-between mb-3">
-                                <span>Meta</span>
-                                <span>45%</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
-                                <div className="bg-red-300  h-1.5 rounded-full dark:bg-red-300" style={{ width: "45%" }}></div>
-                            </div>
-                        </CardProgressItem>
+                        <CardProgressItem
+                            title="Gastos"
+                            icon={<Box />}
+                            percentage={45}
+                            variant="red"
+                        />
                     </div>
                 </div>
             </div>

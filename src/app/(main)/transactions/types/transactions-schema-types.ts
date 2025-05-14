@@ -1,5 +1,15 @@
-import { PaginatedBase, ResponseDataBase, ResponseDataBaseSimple } from "@/utils/paginated-base";
+import { PaginatedBase, ResponseDataBaseSimple } from "@/utils/paginated-base";
 import { CurrencyType, PaymentType, TransactionCategory, TransactionPayerReceiverBase, TransactionStatusBase, TransactionTypeBase } from "../../home/types/home-types-schema";
+
+
+export interface PaginatedBaseParamsTransaction {
+    search?: string;
+    page?: number;
+    perPage?: number;
+    startDate?: string; 
+    endDate?: string; 
+}
+
 
 interface PayerOrReceiverBase {
     id: string

@@ -1,4 +1,4 @@
-import { PaginatedBase, ResponseDataBase } from "@/utils/paginated-base";
+import { PaginatedBase, ResponseDataBase, ResponseDataBaseSimple } from "@/utils/paginated-base";
 
 export enum TransactionCategory {
     SERVICES = "SERVICES",
@@ -90,3 +90,9 @@ interface MetricsBase {
 }
 
 export type MetricsResponse = ResponseDataBase<MetricsBase>;
+
+interface WalletHealthBase {
+    value: number;
+}
+
+export type WalletHealthResponse = ResponseDataBaseSimple<WalletHealthBase>;

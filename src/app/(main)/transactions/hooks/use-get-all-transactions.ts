@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { PaginatedBaseParams } from "@/utils/paginated-base";
 import { getAllTransactions } from "../_api/get-all-transactions";
-import { TransactionResponsePaginated } from "../types/transactions-schema-types";
+import { PaginatedBaseParamsTransaction, TransactionResponsePaginated } from "../types/transactions-schema-types";
 
 
-export function useGetAllTransactions(params: PaginatedBaseParams) {
+export function useGetAllTransactions(params: PaginatedBaseParamsTransaction) {
     return useQuery<TransactionResponsePaginated>({
         queryKey: ["transactions", JSON.stringify(params)],
         queryFn: () => getAllTransactions(params),

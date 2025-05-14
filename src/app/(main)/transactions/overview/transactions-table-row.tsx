@@ -25,6 +25,7 @@ import { useDeleteTransactionsSoftDelete } from "../hooks/use-delete-transaction
 import { useState } from "react";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { AlertDelete } from "@/components/alert-delete";
+import { translateTransactionType } from "@/utils/translations-transaction-type";
 
 interface TransactionProps {
     transaction: TransactionResponseUnit
@@ -69,6 +70,7 @@ export function TransactionsTableRow({ transaction }: TransactionProps) {
             <TableCell>{transaction.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</TableCell>
             <TableCell>{renderCurrencyTag(transaction.currency)}</TableCell>
             <TableCell>{renderTransactionStatusTag(translateTransactionStatus(transaction.status))}</TableCell>
+            <TableCell>{translateTransactionType(transaction.transactionType)}</TableCell>
 
             {/* HoverCard para PayerReceiver */}
             <TableCell>

@@ -1,9 +1,8 @@
 import { http } from "@/lib/http";
 import { cleanObject } from "@/utils/clean-object-paginated-params";
-import { PaginatedBaseParams } from "@/utils/paginated-base";
-import { TransactionResponsePaginated } from "../types/transactions-schema-types";
+import { PaginatedBaseParamsTransaction, TransactionResponsePaginated } from "../types/transactions-schema-types";
 
-export async function getAllTransactions(params: PaginatedBaseParams) {
+export async function getAllTransactions(params: PaginatedBaseParamsTransaction) {
 
     const searchParams = params ? cleanObject(params) : undefined;
 

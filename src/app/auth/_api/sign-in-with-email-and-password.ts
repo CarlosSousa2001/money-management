@@ -1,4 +1,5 @@
 import { http } from "@/lib/http";
+import { toast } from "sonner";
 
 interface SignInWithEmailAndPassword {
     email: string;
@@ -29,8 +30,8 @@ export async function SignInWithEmailAndPassword({ email, password }: SignInWith
 
         console.log("Resposta da API:", response);
 
-        if (!response?.data?.jwToken) {
-            throw new Error("jwToken não encontrado na resposta");
+        if (!response?.data.jwToken) {
+            return null;
         }
 
         return response.data.jwToken;

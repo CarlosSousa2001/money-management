@@ -27,8 +27,17 @@ import { HeaderPageUi } from "@/components/header-page-ui";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { TransactionPayerReceiverBase } from "../home/types/home-types-schema";
-import { translateTransactionType } from "@/utils/translations-transaction-type";
 import { translatePayerOrReceiver } from "@/utils/translations-payer-or-receiver";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ContainerIcon } from "@/components/container-icon";
+import { Bolt } from "lucide-react";
 
 export function PayerOrReceiverOverview() {
 
@@ -64,6 +73,12 @@ export function PayerOrReceiverOverview() {
         setOpenDialogNewPayorReceiver(true)
     }
 
+    function handleResetFilters() {
+        setSearchValue("");
+        setSelectedTransactionType(undefined);
+    }
+
+
     return (
         <div className="space-y-4 p-10  w-full m-auto">
             <div className="space-y-6">
@@ -91,6 +106,21 @@ export function PayerOrReceiverOverview() {
                         ))}
                     </SelectContent>
                 </Select>
+
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        <ContainerIcon>
+                            <Bolt className="size-5 mt-[2px]" />
+                        </ContainerIcon>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => handleResetFilters()}>Resetar filtros</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
 
             </div>
             <div className="max-xs:hidden min-h-[400px] max-h-[60vh] overflow-auto border rounded-lg bg-slate-100 dark:bg-black/20 border-gray-200 dark:border-gray-700">

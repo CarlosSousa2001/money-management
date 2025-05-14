@@ -9,11 +9,11 @@ import {
 } from "@/components/ui/table"
 
 import { DataTablePagination } from "@/components/pagination-base";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useGetAllTransactions } from "../hooks/use-get-all-transactions";
 import { TransactionsTableRow } from "./transactions-table-row";
 import { Input } from "@/components/ui/input";
-import { addDays, format } from "date-fns"
+import { format } from "date-fns"
 import {
     Popover,
     PopoverContent,
@@ -22,25 +22,39 @@ import {
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
+import { Bolt, CalendarIcon, Download, FileDown } from "lucide-react";
 import { Calendar } from "@/components/extends/calendar-edit";
+import { ContainerIcon } from "@/components/container-icon";
+import { downloadReport } from "../_api/download-report";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 
 
 export function TransactionsOverview() {
 
+    const currentYear = new Date().getFullYear();
+
     const [searchValue, setSearchValue] = useState<string>("")
     const [date, setDate] = useState<DateRange | undefined>({
-        from: new Date(2022, 0, 20),
-        to: addDays(new Date(2022, 0, 20), 20),
-    })
+        from: new Date(currentYear, 0, 1),
+        to: new Date(currentYear, 11, 31),
+    });
     const [currentPage, setCurrentPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
 
     const { data, isLoading, isError } = useGetAllTransactions({
         search: searchValue,
         page: currentPage,
-        perPage: perPage
+        perPage: perPage,
+        startDate: date?.from ? format(date.from, "dd/MM/yyyy HH:mm") : undefined,
+        endDate: date?.to ? format(date.to, "dd/MM/yyyy HH:mm") : undefined,
     })
 
     const totalItems = data?.meta.totalItems ?? 0;
@@ -59,6 +73,23 @@ export function TransactionsOverview() {
     };
 
     const rows = data?.data && Array.isArray(data.data) ? data.data : [];
+
+    async function handleDownloadReport() {
+        const url = await downloadReport();
+
+        window.open(url, '_blank');
+
+        // Opcional: libera o recurso após um tempo
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+    }
+
+    function handleResetFilters() {
+        setSearchValue("");
+        setDate({
+            from: new Date(currentYear, 0, 1),
+            to: new Date(currentYear, 11, 31),
+        });
+    }
 
     return (
         <div className="grid grid-cols-1 gap-4">
@@ -102,6 +133,24 @@ export function TransactionsOverview() {
                         </PopoverContent>
                     </Popover>
 
+
+                    <ContainerIcon>
+                        <FileDown className="size-5 mt-[2px]" onClick={() => handleDownloadReport()} />
+                    </ContainerIcon>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <ContainerIcon>
+                                <Bolt className="size-5 mt-[2px]" />
+                            </ContainerIcon>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => handleResetFilters()}>Resetar filtros</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
                 </div>
             </div>
 
@@ -115,6 +164,7 @@ export function TransactionsOverview() {
                             <TableHead title="Amount">Valor</TableHead>
                             <TableHead title="Currency">Moeda</TableHead>
                             <TableHead title="Status">Status</TableHead>
+                            <TableHead title="Transaction Type">Tipo da transação</TableHead>
                             <TableHead title="Payer/Receiver">Pagador/Recebedor</TableHead>
                             <TableHead title="Payments">Pagamentos</TableHead>
                             <TableHead title=""></TableHead>

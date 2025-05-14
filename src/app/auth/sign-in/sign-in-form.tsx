@@ -77,6 +77,12 @@ export function SignInForm() {
                 </p>
               )}
 
+              {errors && (
+                <p className="text-xs font-medium text-red-500 dark:text-red-400">
+                  teste
+                </p>
+              )}
+
               <Link
                 href="/auth/forgot-password"
                 className="text-xs font-medium text-foreground hover:underline"

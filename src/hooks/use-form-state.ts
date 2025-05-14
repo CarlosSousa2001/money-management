@@ -34,6 +34,8 @@ export function useFormState(
       if (state.success && onSuccess) {
         toast.success("Sucesso!!")
         await onSuccess()
+      } else {
+        toast.error("Erro ao realizar login")
       }
 
       if (auth) {
