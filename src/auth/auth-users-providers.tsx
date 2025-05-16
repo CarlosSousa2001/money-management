@@ -27,6 +27,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const openAuthenticatedRoutes = [
         '/home',
         '/user',
+        '/help',
+        '/plan',
     ];
 
     useEffect(() => {

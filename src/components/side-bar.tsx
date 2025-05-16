@@ -46,7 +46,8 @@ export function SideBar() {
   const modules: SideBarBase["module"][] = ["Home", "Utilities", "Manager", "Extra"];
 
   return (
-    <aside className="w-64 h-screen p-4">
+  <aside className="fixed top-0 left-0 w-64 h-screen p-4 flex flex-col justify-between ">
+    <div>
       <h2 className="text-xl font-extrabold mb-6 bg-primary text-white p-3 rounded-lg">
         💰 FinancialsNice
       </h2>
@@ -83,6 +84,19 @@ export function SideBar() {
           );
         })}
       </nav>
-    </aside>
-  );
+    </div>
+
+    {/* Botão "Obtenha Pro" fixo no final */}
+    <div className="pt-4 border-t mt-4">
+      <button
+        onClick={() => router.push('/plan')}
+        className="w-full text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+        aria-label="Obtenha a versão Pro"
+      >
+        Obtenha Pro
+      </button>
+    </div>
+  </aside>
+);
+
 }

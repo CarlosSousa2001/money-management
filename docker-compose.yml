@@ -1,25 +1,26 @@
 name: frontend-mvp
 services:
   frontend:
-    container_name: frontend-mvp-container     
+    container_name: frontend-mvp-container
     build:
-      context: .                       
-      dockerfile: Dockerfile                
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "3000:3000"                       
-    volumes:
-      - .:/frontend
+      - "3000:3000"
     env_file:
-      - .env.production                 
+      - .env.production
     environment:
-      - NODE_ENV=production                   
-    command: npm run start                    
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://finnice-container:8080/
+    networks:
+      - shared
+    restart: always
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"] 
-      interval: 30s                         
-      timeout: 10s                          
-      retries: 3                            
-    restart: always                          
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-volumes:
-  frontend_data:                               
+networks:
+  shared:
+    external: true

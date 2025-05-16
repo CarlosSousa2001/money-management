@@ -48,4 +48,8 @@ O **Money Management** consome dados de uma **API desenvolvida em C# com .NET**,
 
 Essa arquitetura separada permite **escalabilidade** e **manutenção eficiente** entre o frontend e o backend.
 
+### credits
+
+- plan page
+- https://github.com/aymanch-03/shadcn-pricing-page
 

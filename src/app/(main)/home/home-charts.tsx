@@ -30,7 +30,7 @@ import { TransactionStatusBase } from "./types/home-types-schema"
 
 const chartConfig = {
     pay: {
-        label: "Pay",
+        label: "Paid",
         color: "oklch(0.768 0.233 130.85)",
     },
     receive: {
