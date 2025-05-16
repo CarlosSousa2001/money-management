@@ -88,14 +88,14 @@ export function PayerOrReceiverOverview() {
                 <Separator />
             </div>
 
-            <div className="mt-6 flex items-center gap-4">
-                <Input placeholder="Buscar por..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+            <div className="mt-6 flex flex-wrap items-center gap-4">
+                <Input placeholder="Buscar por..." value={searchValue} className=" flex-1 min-w-[180px]" onChange={(e) => setSearchValue(e.target.value)} />
 
                 <Select
                     value={selectedTransactionType}
                     onValueChange={(value) => setSelectedTransactionType(value)}
                 >
-                    <SelectTrigger className="w-[240px]">
+                    <SelectTrigger className="min-w-[240px] max-sm:flex-1">
                         <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
                     <SelectContent>

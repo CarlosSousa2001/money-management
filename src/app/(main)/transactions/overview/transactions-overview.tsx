@@ -93,16 +93,22 @@ export function TransactionsOverview() {
 
     return (
         <div className="grid grid-cols-1 gap-4">
-            <div className="">
-                <div className="flex items-center gap-4">
-                    <Input placeholder="Buscar por..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+            <div className="w-full">
+                <div className="flex flex-wrap gap-4 items-center">
+                    <Input
+                        className="flex-1 min-w-[180px]"
+                        placeholder="Buscar por..."
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e.target.value)}
+                    />
+
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button
                                 id="date"
-                                variant={"outline"}
+                                variant="outline"
                                 className={cn(
-                                    "w-[300px] justify-start text-left font-normal",
+                                    "min-w-[200px] sm:w-[300px] justify-start text-left font-normal",
                                     !date && "text-muted-foreground"
                                 )}
                             >
@@ -110,8 +116,7 @@ export function TransactionsOverview() {
                                 {date?.from ? (
                                     date.to ? (
                                         <>
-                                            {format(date.from, "LLL dd, y")} -{" "}
-                                            {format(date.to, "LLL dd, y")}
+                                            {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
                                         </>
                                     ) : (
                                         format(date.from, "LLL dd, y")
@@ -133,7 +138,6 @@ export function TransactionsOverview() {
                         </PopoverContent>
                     </Popover>
 
-
                     <ContainerIcon>
                         <FileDown className="size-5 mt-[2px]" onClick={() => handleDownloadReport()} />
                     </ContainerIcon>
@@ -147,12 +151,14 @@ export function TransactionsOverview() {
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Ações</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleResetFilters()}>Resetar filtros</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleResetFilters()}>
+                                Resetar filtros
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-
                 </div>
             </div>
+
 
             <div className="max-xs:hidden min-h-[400px]  max-h-[60vh]  overflow-auto border rounded-lg bg-slate-100 dark:bg-black/20 border-gray-200 dark:border-gray-700">
                 <Table>

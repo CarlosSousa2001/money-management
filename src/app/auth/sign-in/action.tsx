@@ -1,8 +1,8 @@
-'use server'
-import { cookies } from 'next/headers'
+"use client"
 import { z } from 'zod'
 import { SignInWithEmailAndPassword } from '../_api/sign-in-with-email-and-password'
-import { toast } from 'sonner'
+import { setCookie } from 'cookies-next'
+
 
 
 const signInSchema = z.object({
@@ -30,16 +30,14 @@ export async function signInWithEmailAndPassword(data: FormData) {
             password,
         })
 
-        const cookieStore = await cookies();
-
-        if(token === undefined) {
-            return { success: false, message: "Email os senha inválidos", errors: null }
+        if (token === undefined) {
+            return { success: false, message: "Token undefined", errors: null }
         }
         if (token === null) {
-            return { success: false, message: "Email os senha inválidos", errors: null }
+            return { success: false, message: "Token veio nulo no segundo if", errors: null }
         }
 
-        cookieStore.set('sshtk', token, {
+        setCookie('sshtk', token, {
             path: '/',
             maxAge: 60 * 60 * 7, // 7 days
             secure: process.env.NODE_ENV === 'production',
@@ -48,7 +46,7 @@ export async function signInWithEmailAndPassword(data: FormData) {
     } catch (err) {
         if (err) {
             console.error(err)
-            return { success: false, message: "Email os senha inválidos", errors: null }
+            return { success: false, message: "Email os senha inválidos caio do catch", errors: null }
         }
 
         console.error(err)

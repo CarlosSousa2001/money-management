@@ -8,8 +8,6 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { signInWithEmailAndPassword } from './action'
-import { useFormState } from '@/hooks/use-form-state'
 
 import {
   Card,
@@ -18,19 +16,47 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { useState } from 'react'
+import { signInWithEmailAndPassword } from './action'
+import { getProfile } from '@/app/(main)/user/_api/get-me'
+import { toast } from 'sonner'
 
 export function SignInForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const [{ errors, message, success }, handleSubmit, isPending] = useFormState(
-    signInWithEmailAndPassword,
-    () => {
+  const [isPending, setIsPending] = useState(false)
+  const [success, setSuccess] = useState<boolean | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
+  const [errors, setErrors] = useState<Record<string, string[]> | null>(null)
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setIsPending(true)
+    setSuccess(null)
+    setMessage(null)
+    setErrors(null)
+
+    const formData = new FormData(event.currentTarget)
+    const result = await signInWithEmailAndPassword(formData)
+
+    setIsPending(false)
+    setSuccess(result.success)
+    setMessage(result.message)
+    setErrors(result.errors)
+
+     if (result.success) {
+      try {
+        const user_details = await getProfile()
+        localStorage.setItem('user', JSON.stringify(user_details.data))
+      } catch (err) {
+        toast.error('Erro ao buscar detalhes do usuário')
+      }
+
       router.push('/home')
-    },
-    undefined,
-    true,
-  )
+    }
+  }
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-white to-blue-200 px-4">

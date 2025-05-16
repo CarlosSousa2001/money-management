@@ -43,7 +43,7 @@ export function UsersProfileForm() {
     mode: "onChange",
   })
 
-  const { reset, register, setValue, watch, formState: { errors }, getValues } = form
+  const { reset, register, setValue, watch, formState: { errors }, getValues, clearErrors } = form
 
   const { resetUserForm } = useUserFormActions(reset);
 
@@ -63,6 +63,14 @@ export function UsersProfileForm() {
     setValue(`addresses.zipCode`, res.zip_code)
     setValue(`addresses.neighborhood`, res.neighborhood)
     setValue(`addresses.complement`, res.complement)
+
+    clearErrors(`addresses.zipCode`)
+    clearErrors(`addresses.street`)
+    clearErrors(`addresses.city`)
+    clearErrors(`addresses.state`)
+    clearErrors(`addresses.neighborhood`)
+    clearErrors(`addresses.complement`)
+
   }
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -102,19 +110,30 @@ export function UsersProfileForm() {
 
         <div className="flex items-center gap-4">
           <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center overflow-hidden">
-            {imageProfile ? (
+            {image ? (
+              <Image src={image} width={100} height={100} alt="preview" />
+            ) : imageProfile ? (
               <Image src={"/" + imageProfile.split("/").pop()} width={100} height={100} alt="profile-image-user" />
             ) : (
               <img className="w-[120px] h-[160px] bg-white" />
             )}
           </div>
+
           <div className="flex items-center gap-2">
             <Input
               type="file"
               accept="image/*"
               ref={fileInputRef}
               className="file:px-2 file:rounded-md file:bg-blue-500 file:text-white hover:file:bg-blue-600"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const localImageUrl = URL.createObjectURL(file);
+                  setImage(localImageUrl); // estado de preview local
+                }
+              }}
             />
+
           </div>
         </div>
         <FormField
@@ -198,8 +217,8 @@ export function UsersProfileForm() {
         />
 
         <div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2 flex items-center justify-between gap-4">
+          <div className="grid grid-cols-2 gap-4 items-start">
+            <div className="col-span-2 flex  justify-between gap-4 items-start">
               <FormField
                 control={form.control}
                 name={`addresses.zipCode`}
@@ -216,7 +235,6 @@ export function UsersProfileForm() {
                   </FormItem>
                 )}
               />
-
 
               <FormField
                 control={form.control}

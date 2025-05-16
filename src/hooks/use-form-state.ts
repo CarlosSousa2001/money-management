@@ -12,7 +12,6 @@ export function useFormState(
   action: (data: FormData) => Promise<FormState>,
   onSuccess?: () => Promise<void> | void,
   initialState?: FormState,
-  auth?: boolean,
 ) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -36,11 +35,6 @@ export function useFormState(
         await onSuccess()
       } else {
         toast.error("Erro ao realizar login")
-      }
-
-      if (auth) {
-        const user_datails = await getProfile()
-        localStorage.setItem('user', JSON.stringify(user_datails.data))
       }
 
       setFormState(state)
