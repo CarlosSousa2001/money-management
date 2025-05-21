@@ -7,6 +7,7 @@ import {
   HelpCircle,
   WalletCards,
   Users,
+  Wallet,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
@@ -36,6 +37,7 @@ export function SideBar() {
     { path: "/transactions/overview", name: "Transações", icon: <CreditCard size={20} />, module: "Utilities" },
     // { path: "/plan", name: "Plan", icon: <Clipboard size={20} />, module: "Utilities" },
     { path: "/card/new", name: "Cartão de crédito", icon: <WalletCards size={20} />, module: "Utilities" },
+    { path: "/wallet", name: "Carteira", icon: <Wallet size={20} />, module: "Utilities" },
     // { path: "/budget", name: "Budget", icon: <DollarSign size={20} />, module: "Utilities" },
     { path: "/payerOrReceiver", name: "Pagadores", icon: <Users size={20} />, module: "Manager" },
 
