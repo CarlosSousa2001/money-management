@@ -7,11 +7,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { DATA_CONST_PAGINATED } from "@/utils/paginated-base";
 import { DataTablePagination } from "@/components/pagination-base";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import { TransactionResponsePaginated } from "./types/home-types-schema";
-import { getAllTransactionHomeBase } from "./_api/get-all-trasanction-home-base";
 import { HomeTableRow } from "./home-table-row";
 import { useGetAllTransactions } from "../transactions/hooks/use-get-all-transactions";
 
