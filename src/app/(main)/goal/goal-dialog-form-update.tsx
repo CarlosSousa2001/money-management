@@ -31,6 +31,7 @@ import { useUpdateGoal } from "./hooks/use-update-goal";
 import { translateGoalType } from "@/utils/translations-goals-type";
 import { DateTimePicker } from "@/components/extends/date-picker";
 import { ptBR } from "date-fns/locale";
+import { parseISO } from "date-fns";
 
 interface Props {
     onClose: (open: boolean) => void;
@@ -53,7 +54,7 @@ export function GoalDialogFormUpdate({ onClose, item }: Props) {
             name: item.name,
             target: item.target,
             goalType: item.goalType,
-            due: item.due,
+            due: typeof item.due === "string" ? parseISO(item.due).toISOString() : undefined,
         }
     })
 

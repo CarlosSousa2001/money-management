@@ -36,6 +36,8 @@ import { GoalResponseUnit } from "./types/goals-schema-types";
 import { translateGoalType } from "@/utils/translations-goals-type";
 import { useDeleteGoal } from "./hooks/use-delete-goal";
 import { GoalDialogFormUpdate } from "./goal-dialog-form-update";
+import { format } from "path";
+import { formatDate } from "date-fns";
 
 
 interface GoalTableRowBase {
@@ -81,10 +83,17 @@ export function GoalTableRow({ item }: GoalTableRowBase) {
 
             </TableCell>
             <TableCell>
-                        teste
+                {item.name}
+            </TableCell>
+            <TableCell>
+                {item.target.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
             </TableCell>
             <TableCell className="">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{translateGoalType(item.goalType)}</p>
+            </TableCell>
+
+             <TableCell>
+                {formatDate(new Date(item.due), 'dd/MM/yyyy')}
             </TableCell>
 
 

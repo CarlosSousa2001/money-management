@@ -50,7 +50,7 @@ export const transactionsFormSchema = z.object({
         required_error: "Please select a transaction date.",
         invalid_type_error: "Please select a valid transaction date.",
     }).transform((date) => {
-        return format(date, 'dd/MM/yyyy HH:mm');
+        return format(date, 'yyyy/MM/dd HH:mm');
     }),
     email: z
         .string({
@@ -137,7 +137,7 @@ export const transactionsUpdateFormSchema = z.object({
         required_error: "Please select a transaction date.",
         invalid_type_error: "Please select a valid transaction date.",
     }).transform((date) => {
-        return format(date, 'dd/MM/yyyy HH:mm');
+        return format(date, 'yyyy/MM/dd HH:mm');
     }),
     email: z
         .string({

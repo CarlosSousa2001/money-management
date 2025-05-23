@@ -10,7 +10,7 @@ export async function updateGoal({
 }: GoalUpdateRequest) {
 
     const response = await http
-        .post(`goals/${id}`, {
+        .put(`goals/${id}`, {
             json: {
                 name,
                 target,

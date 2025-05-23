@@ -29,7 +29,7 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
                     <HeaderUi />
                     <div className={`w-full bg-slate-200 dark:bg-neutral-950 rounded-4xl min-h-screen  ${isDesktop ? "p-6" : "p-0"}`}>
                         {/* Conteúdo Principal */}
-                        <div className="flex flex-col mx-auto max-w-6xl">
+                        <div className="flex flex-col mx-auto max-w-7xl">
                             {children}
                         </div>
                     </div>

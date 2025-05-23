@@ -9,9 +9,9 @@ export const goalSchema = z.object({
     due: z.string().optional().transform((val) => {
         if (!val) return undefined;
         const parsed = parseISO(val);
-        return isValid(parsed) ? format(parsed, 'yyyy-MM-dd') : undefined;
-    }).refine((val) => !val || /^\d{4}-\d{2}-\d{2}$/.test(val), {
-        message: 'Data inválida (esperado: yyyy-MM-dd)',
+        return isValid(parsed) ? format(parsed, 'yyyy-MM-dd HH:mm') : undefined;
+    }).refine((val) => !val || /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(val), {
+        message: 'Data inválida (esperado: yyyy-MM-dd HH:mm)',
     }),
 
 });
@@ -28,5 +28,5 @@ export const goalsSchemaDefault: Partial<GoalSchemaData> = {
     name: "",
     target: 0,
     goalType: GoalType.INVESTMENT,
-    due: format(new Date(), 'yyyy-MM-dd')
+    due: format(new Date(), 'yyyy-MM-dd HH:mm'),
 };

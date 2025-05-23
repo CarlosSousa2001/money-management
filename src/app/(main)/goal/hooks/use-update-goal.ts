@@ -9,9 +9,15 @@ export function useUpdateGoal(onSuccessCallback: () => void) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (payload: GoalUpdateSchemaData) => updateGoal(payload),
+        mutationFn: (payload: GoalUpdateSchemaData) => {
+            const convertedPayload = {
+                ...payload,
+                due: payload.due ? new Date(payload.due) : undefined,
+            };
+            return updateGoal(convertedPayload);
+        },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["goal"] });
+            queryClient.invalidateQueries({ queryKey: ["goals"] });
             toast.success("Meta atualizada com sucesso!");
             onSuccessCallback();
         },
