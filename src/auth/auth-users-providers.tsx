@@ -29,7 +29,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         '/user',
         '/help',
         '/plan',
-        '/wallet'
+        '/wallet',
+        '/goal',
     ];
 
     useEffect(() => {

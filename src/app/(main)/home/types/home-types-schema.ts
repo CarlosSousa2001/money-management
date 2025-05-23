@@ -96,3 +96,16 @@ interface WalletHealthBase {
 }
 
 export type WalletHealthResponse = ResponseDataBaseSimple<WalletHealthBase>;
+
+
+// transaction next to due
+
+
+interface TransactionNextToDueBase {
+    id: string;
+    category: TransactionCategory;
+    description: string;
+    date: string;
+}
+
+export type TransactionNextToDueResponse = ResponseDataBase<TransactionNextToDueBase>;

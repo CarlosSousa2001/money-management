@@ -14,25 +14,10 @@ import { useEffect, useState } from "react";
 import { HomeCharts } from "./home-charts";
 import { HomeDataTable } from "./home-data-table";
 import { useWalletHealth } from "./hooks/use-wallet-health";
-
-const transactions = [
-    {
-        date: "2025-03-29", // Exemplo de transação de hoje
-        title: "Pagamento de Serviços",
-        description: "Pagamento realizado hoje por serviços prestados.",
-    },
-    {
-        date: "2025-03-28", // Exemplo de transação de ontem
-        title: "Pagamento de Produtos",
-        description: "Pagamento realizado ontem por compra de produtos.",
-    },
-    {
-        date: "2025-03-30", // Exemplo de transação futura
-        title: "Pagamento Futuro",
-        description: "Pagamento para o próximo mês.",
-    },
-];
-
+import { useGetTransactionNextToDue } from "./hooks/use-get-transaction-next-to-due";
+import { format } from "date-fns";
+import { HomeChartsBar } from "./home-charts-bar";
+import { HomeChartsCircle } from "./home-charts-circle";
 
 function getTodayDate() {
     const today = new Date();
@@ -42,6 +27,7 @@ function getTodayDate() {
 export default function HomePage() {
 
     const { data: walletHealth, isLoading, isError, error } = useWalletHealth();
+    const { data: transactionNextToDue, isLoading: isLoadingTransactionNextToDue } = useGetTransactionNextToDue();
 
     const [todayDate, setTodayDate] = useState(getTodayDate());
     useEffect(() => {
@@ -90,31 +76,32 @@ export default function HomePage() {
             </div>
 
             <div className="grid grid-cols-6 gap-8 mt-8">
-                <div className="col-span-6 2md:col-span-4">
-                    <HomeDataTable />
+                <div className="col-span-6 2md:col-span-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <HomeChartsBar />
+                    <HomeChartsCircle/>
                 </div>
-                <div className="col-span-6 2md:col-span-2 grid grid-cols-1 gap-8">
+                <div className="col-span-6 2md:col-span-2 grid grid-cols-1">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Atividades Diárias</CardTitle>
-                            <CardDescription>Descrição do Cartão</CardDescription>
+                            <CardTitle>Transações proximas de vencer</CardTitle>
+                            <CardDescription>Ultimas três transações que estão próximas do vencimento.</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <ol className="relative border-s border-gray-200 dark:border-gray-700">
-                                {transactions.map((transaction, index) => {
+                                {transactionNextToDue?.data.map((transaction, index) => {
                                     const ballColor = getBallColor(transaction.date); // Obtém a cor da bolinha
                                     return (
-                                        <li key={index} className="mb-10 ms-4">
+                                        <li key={index} className=" ms-4">
                                             <div
                                                 className={`absolute w-3 h-3 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 ${ballColor}`}
                                             ></div> {/* Bolinha colorida */}
 
                                             <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
-                                                {transaction.date}
+                                                {format(new Date(transaction.date), 'dd/MM/yyyy')}
                                             </time> {/* Cor do texto da data */}
 
                                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                                {transaction.title}
+                                                {transaction.description}
                                             </h3> {/* Título com cor padrão */}
 
                                             <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
