@@ -1,6 +1,7 @@
 import { CurrencyType, PaymentType, TransactionCategory, TransactionStatusBase, TransactionTypeBase } from "@/app/(main)/home/types/home-types-schema"
 import { z } from "zod"
-import { format } from "date-fns";
+import { toZonedTime, format } from 'date-fns-tz';
+import { parse } from "date-fns";
 
 const paymentsTypesSchema = z.object({
     cardId: z.string().optional(),
@@ -46,12 +47,17 @@ export const transactionsFormSchema = z.object({
     currency: z.nativeEnum(CurrencyType, {
         required_error: "Please select a currency."
     }),
-    TransactionScheduledDate: z.coerce.date({
+    TransactionScheduledDate: z.string({
         required_error: "Please select a transaction date.",
         invalid_type_error: "Please select a valid transaction date.",
-    }).transform((date) => {
-        return format(date, 'yyyy/MM/dd HH:mm');
-    }),
+    })
+        .refine((value) => /^\d{4}-\d{2}-\d{2}$/.test(value), {
+            message: "Please enter a valid date in the format YYYY-MM-DD.",
+        })
+        .transform((dateString) => {
+            const parsedDate = parse(dateString, 'yyyy-MM-dd', new Date())
+            return format(parsedDate, 'yyyy-MM-dd')  // só para garantir
+        }),
     email: z
         .string({
             required_error: "Please select an email to display.",
@@ -133,12 +139,17 @@ export const transactionsUpdateFormSchema = z.object({
     currency: z.nativeEnum(CurrencyType, {
         required_error: "Please select a currency."
     }),
-    TransactionScheduledDate: z.coerce.date({
+    TransactionScheduledDate: z.string({
         required_error: "Please select a transaction date.",
         invalid_type_error: "Please select a valid transaction date.",
-    }).transform((date) => {
-        return format(date, 'yyyy/MM/dd HH:mm');
-    }),
+    })
+        .refine((value) => /^\d{4}-\d{2}-\d{2}$/.test(value), {
+            message: "Please enter a valid date in the format YYYY-MM-DD.",
+        })
+        .transform((dateString) => {
+            const parsedDate = parse(dateString, 'yyyy-MM-dd', new Date())
+            return format(parsedDate, 'yyyy-MM-dd')  // só para garantir
+        }),
     email: z
         .string({
             required_error: "Please select an email to display.",

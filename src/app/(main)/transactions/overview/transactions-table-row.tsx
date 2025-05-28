@@ -47,7 +47,9 @@ export function TransactionsTableRow({ transaction }: TransactionProps) {
             <TableCell className="">
                 <DropdownMenu open={open} onOpenChange={setOpen}>
                     <DropdownMenuTrigger asChild>
-                        <Ellipsis className="size-5" />
+                        <div className="bg-card rounded-lg p-1 hover:bg-muted transition-colors cursor-pointer">
+                            <Ellipsis className="size-5" />
+                        </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
                         <DropdownMenuItem onClick={() => {

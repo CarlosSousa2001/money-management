@@ -1,6 +1,6 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
+import { Grip, TrendingUp } from "lucide-react"
 import { Bar, BarChart, XAxis, YAxis } from "recharts"
 
 import {
@@ -17,6 +17,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { useSortable } from '@dnd-kit/sortable';
+
+
 const chartData = [
   { month: "January", desktop: 186 },
   { month: "February", desktop: 305 },
@@ -29,19 +32,43 @@ const chartData = [
 const chartConfig = {
   desktop: {
     label: "Desktop",
-      color: "oklch(69.72% 0.201 249.43)"
+    color: "oklch(69.72% 0.201 249.43)"
   },
 } satisfies ChartConfig
 
-export function HomeChartsBar() {
+
+export function HomeChartsBar({ id }: { id: string }) {
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id });
+
+  const style = {
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    opacity: isDragging ? 0.5 : 1,
+    cursor: 'grab',
+  };
+
   return (
-    <Card>
+    <Card ref={setNodeRef} {...attributes} style={style}>
       <CardHeader>
-        <CardTitle>Meses com maior gasto</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>Meses com maior gasto</CardTitle>
+          <Grip
+            {...listeners}
+            className="cursor-grab text-gray-500 hover:text-gray-700"
+            size={24}
+          />
+        </div>
         <CardDescription>Janeiro - Dezembro 2025</CardDescription>
       </CardHeader>
-      <CardContent className="max-h-[280px] h-full">
-        <ChartContainer config={chartConfig} className="max-h-[280px] h-full w-full">
+      <CardContent className="h-[300px] min-h-full">
+        <ChartContainer config={chartConfig} className="h-[300px] min-h-full w-full">
           <BarChart
             accessibilityLayer
             data={chartData}
