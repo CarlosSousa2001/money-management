@@ -27,14 +27,14 @@ const chartData = [
 ]
 
 const chartConfig = {
-    desktop: {
-        label: "Desktop",
-        color: "oklch(0.768 0.233 130.85)",
-    },
-    mobile: {
-        label: "Mobile",
-        color: "oklch(0.704 0.191 22.216)",
-    },
+  desktop: {
+    label: "Desktop",
+    color: "oklch(0.768 0.233 130.85)",
+  },
+  mobile: {
+    label: "Mobile",
+    color: "oklch(0.704 0.191 22.216)",
+  },
 } satisfies ChartConfig
 
 export function WalletChartLines() {
@@ -45,7 +45,7 @@ export function WalletChartLines() {
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={chartConfig} >
           <LineChart
             accessibilityLayer
             data={chartData}

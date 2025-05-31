@@ -63,7 +63,9 @@ export function GoalTableRow({ item }: GoalTableRowBase) {
 
                 <DropdownMenu open={open} onOpenChange={setOpen}>
                     <DropdownMenuTrigger asChild>
-                        <Ellipsis className="size-5" />
+                        <div className="bg-card rounded-lg p-1 hover:bg-muted transition-colors cursor-pointer">
+                            <Ellipsis className="size-5" />
+                        </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
                         <DropdownMenuItem onClick={() => {
@@ -92,7 +94,7 @@ export function GoalTableRow({ item }: GoalTableRowBase) {
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{translateGoalType(item.goalType)}</p>
             </TableCell>
 
-             <TableCell>
+            <TableCell>
                 {formatDate(new Date(item.due), 'dd/MM/yyyy')}
             </TableCell>
 

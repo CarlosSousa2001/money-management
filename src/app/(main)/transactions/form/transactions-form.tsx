@@ -346,6 +346,53 @@ export function TransactionsForm() {
               </FormItem>
             )}
           />
+
+          
+          {/* <FormField
+            control={form.control}
+            name="TransactionScheduledDate"
+            render={({ field }) => {
+              // converter valor do field para Date (supondo que venha string ISO ou Date)
+              const date = field.value ? new Date(field.value) : undefined;
+
+              return (
+                <FormItem className="col-span-6 lg:col-span-2">
+                  <FormLabel>Data do pagamento</FormLabel>
+                  <FormControl>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-[240px] justify-start text-left font-normal",
+                            !date && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {date ? format(date, "PPP") : <span>Pick a date</span>}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={date}
+                          onSelect={(selectedDate) => {
+                            field.onChange(selectedDate);
+                          }}
+                          autoFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </FormControl>
+                  <FormDescription>
+                    A confirmação da sera realizada na data selecionada.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          /> */}
+
           {/* <FormField
             control={form.control}
             name="payerOurReceiver"

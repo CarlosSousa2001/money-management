@@ -53,8 +53,8 @@ export function TransactionsOverview() {
         search: searchValue,
         page: currentPage,
         perPage: perPage,
-        startDate: date?.from ? format(date.from, "dd/MM/yyyy HH:mm") : undefined,
-        endDate: date?.to ? format(date.to, "dd/MM/yyyy HH:mm") : undefined,
+        startDate: date?.from ? format(date.from, "yyyy-MM-dd HH:mm") : undefined,
+        endDate: date?.to ? format(date.to, "yyyy-MM-dd HH:mm") : undefined,
     })
 
     const totalItems = data?.meta.totalItems ?? 0;
